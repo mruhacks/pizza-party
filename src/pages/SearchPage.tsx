@@ -103,6 +103,24 @@ export function SearchPage() {
     }
   };
 
+  // Deep-link: when shops list updates, check for ?shopId=
+  useEffect(() => {
+    if (shops.length === 0) return;
+    const params = new URLSearchParams(window.location.search);
+    const shopIdParam = params.get("shopId");
+    if (!shopIdParam) return;
+    const idNum = parseInt(shopIdParam, 10);
+    if (isNaN(idNum)) return;
+    const found = shops.find(s => s.id === idNum);
+    if (found) {
+      setSelectedShop(found);
+      if (mapRef.current) {
+        mapRef.current.panTo({ lat: found.lat, lng: found.lng });
+        mapRef.current.setZoom(15);
+      }
+    }
+  }, [shops]);
+
   return (
     <div className="h-[calc(100vh-73px)] flex bg-slate-900">
       {/* Left sidebar with search and results */}

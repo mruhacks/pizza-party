@@ -1,12 +1,19 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Heart, MessageCircle, Share2 } from "lucide-react";
+import { Heart, MessageCircle, Share2, MapPin } from "lucide-react";
 
 interface Post {
   id: number;
   userId: number;
   content: string;
+    photo_url?: string;
   createdAt: string;
+  pizza?: {
+    id: number;
+    name?: string;
+    lat?: number;
+    lng?: number;
+  };
 }
 
 interface Author {
@@ -63,6 +70,7 @@ export function FeedPage() {
         body: JSON.stringify({
           userId: userId,
           content: newPost,
+          // pizzaId could be selected via future UI; omitted here
         }),
       });
 
@@ -191,6 +199,27 @@ export function FeedPage() {
                   </div>
 
                   <p className="text-white/90 mb-4">{post.content}</p>
+
+                  {post.pizza?.id && (
+                    <button
+                      onClick={() => navigate(`/search?shopId=${post.pizza?.id}`)}
+                      className="inline-flex items-center gap-2 mb-4 px-3 py-1.5 rounded-full bg-purple-500/20 border border-purple-400/40 text-purple-200 text-xs hover:bg-purple-500/30 hover:border-purple-300 transition-colors"
+                      title="View this pizza shop on the map"
+                    >
+                      <MapPin className="w-3 h-3" />
+                      <span className="font-medium truncate max-w-[160px]">
+                        {post.pizza?.name || 'View Shop'}
+                      </span>
+                    </button>
+                  )}
+
+                  {post.photo_url && (
+                    <img
+                      src={post.photo_url}
+                      alt="Post"
+                      className="w-full rounded-xl object-cover mb-4 max-h-96"
+                    />
+                  )}
 
                   <div className="flex gap-8 pt-4 border-t border-white/10">
                     <button className="flex items-center gap-2 text-white/50 hover:text-pink-400 transition-colors group">

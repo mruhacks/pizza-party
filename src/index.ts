@@ -47,7 +47,7 @@ const server = serve({
           const q = url.searchParams.get("q") || "";
           const userLat = parseFloat(url.searchParams.get("lat") || "51.0447");
           const userLng = parseFloat(url.searchParams.get("lng") || "-114.0719");
-          
+
           // Secure, parameterized search (case-insensitive). Empty query returns all.
           let result;
           let query: string;
@@ -161,7 +161,7 @@ const server = serve({
 
           values.push(userId);
           const query = `UPDATE users SET ${updates.join(", ")} WHERE id = $${paramCount} RETURNING *`;
-          
+
           const result = await pool.query(query, values);
 
           if (result.rows.length === 0) {
@@ -196,11 +196,17 @@ const server = serve({
               posts.id,
               posts.user_id,
               posts.content,
+              posts.photo_url,
+              posts.pizza_id,
               posts.created_at,
               users.name as author_name,
               users.profile_pic_url as author_pic
+              , pizzas.name as pizza_name,
+              pizzas.lat as pizza_lat,
+              pizzas.lng as pizza_lng
             FROM posts
             LEFT JOIN users ON posts.user_id = users.id
+            LEFT JOIN pizzas ON posts.pizza_id = pizzas.id
             ORDER BY posts.created_at DESC
           `);
 
@@ -210,7 +216,14 @@ const server = serve({
               id: row.id,
               userId: row.user_id,
               content: row.content,
+              photo_url: row.photo_url,
               createdAt: row.created_at,
+              pizza: row.pizza_id ? {
+                id: row.pizza_id,
+                name: row.pizza_name,
+                lat: row.pizza_lat ? parseFloat(row.pizza_lat) : undefined,
+                lng: row.pizza_lng ? parseFloat(row.pizza_lng) : undefined,
+              } : undefined,
               author: {
                 id: row.user_id,
                 name: row.author_name,
@@ -226,13 +239,13 @@ const server = serve({
       async POST(req) {
         try {
           const body = await req.json();
-          const { userId, content } = body;
+          const { userId, content, pizzaId } = body;
 
           // VULNERABLE: No validation of user ownership
           // Anyone can post as any user!
           const result = await pool.query(
-            "INSERT INTO posts (user_id, content) VALUES ($1, $2) RETURNING *",
-            [userId, content]
+            "INSERT INTO posts (user_id, content, pizza_id) VALUES ($1, $2, $3) RETURNING *",
+            [userId, content, pizzaId || null]
           );
 
           const post = result.rows[0];
@@ -247,6 +260,7 @@ const server = serve({
               userId: post.user_id,
               content: post.content,
               createdAt: post.created_at,
+              pizza: post.pizza_id ? { id: post.pizza_id } : undefined,
               author: user ? {
                 id: user.id,
                 name: user.name,
