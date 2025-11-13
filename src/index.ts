@@ -54,16 +54,22 @@ const server = serve({
           
           const result = await pool.query(query);
 
+          // Map and calculate distances
+          const shopsWithDistance = result.rows.map((shop) => ({
+            ...shop,
+            lat: parseFloat(shop.lat),
+            lng: parseFloat(shop.lng),
+            rating: parseFloat(shop.rating),
+            distance: calculateDistance(userLat, userLng, parseFloat(shop.lat), parseFloat(shop.lng)),
+          }));
+
+          // Sort by distance (closest first)
+          shopsWithDistance.sort((a, b) => a.distance - b.distance);
+
           return Response.json({
             success: true,
             query: query,
-            results: result.rows.map((shop) => ({
-              ...shop,
-              lat: parseFloat(shop.lat),
-              lng: parseFloat(shop.lng),
-              rating: parseFloat(shop.rating),
-              distance: calculateDistance(userLat, userLng, parseFloat(shop.lat), parseFloat(shop.lng)),
-            })),
+            results: shopsWithDistance,
           });
         } catch (error) {
           return Response.json(
