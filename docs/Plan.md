@@ -1,5 +1,3 @@
-IGNORE THIS FILE
-
 ## Plan: Build Pizza Party Security Workshop App
 
 Build a deliberately vulnerable Pizza Party social app to demonstrate three key security vulnerabilities—SQL Injection, Broken Access Control, and Vulnerable Components—for second-year CS/SE students. The app will feature a searchable pizza database, user profiles, and social feed, with intentional flaws in the backend API for live hacking demonstrations.

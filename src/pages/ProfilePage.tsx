@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { User, MapPin, Mail, LogOut, Edit2, Check, X } from "lucide-react";
 
 interface UserProfile {
@@ -11,25 +11,31 @@ interface UserProfile {
 }
 
 export function ProfilePage() {
+  const { id } = useParams<{ id: string }>();
   const [user, setUser] = useState<UserProfile | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
-  const [targetUserId, setTargetUserId] = useState<string>("");
   const [saveMessage, setSaveMessage] = useState("");
   const navigate = useNavigate();
 
+  const currentUserId = localStorage.getItem("userId");
+  const profileUserId = id || currentUserId;
+  const isOwnProfile = profileUserId === currentUserId;
+
   useEffect(() => {
-    const userId = localStorage.getItem("userId");
-    const userName = localStorage.getItem("userName");
-    if (userId && userName) {
-      fetchUserProfile(userId);
-    } else {
+    if (!currentUserId) {
       navigate("/login");
+      return;
     }
-  }, [navigate]);
+
+    if (profileUserId) {
+      fetchUserProfile(profileUserId);
+    }
+  }, [profileUserId, currentUserId, navigate]);
 
   const fetchUserProfile = async (userId: string) => {
+    setLoading(true);
     try {
       const response = await fetch(`/api/users/${userId}`);
       const data = await response.json();
@@ -38,7 +44,6 @@ export function ProfilePage() {
         const userWithId = { ...data.user, id: userId };
         setUser(userWithId);
         setFormData(userWithId);
-        setTargetUserId(userId);
       }
     } catch (error) {
       console.error("Failed to fetch profile:", error);
@@ -48,10 +53,10 @@ export function ProfilePage() {
   };
 
   const handleSave = async () => {
-    if (!formData) return;
+    if (!formData || !profileUserId) return;
 
     try {
-      const response = await fetch(`/api/users/${targetUserId}`, {
+      const response = await fetch(`/api/users/${profileUserId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -79,13 +84,6 @@ export function ProfilePage() {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("userId");
-    localStorage.removeItem("user");
-    navigate("/login");
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800 flex items-center justify-center">
@@ -102,7 +100,9 @@ export function ProfilePage() {
     <div className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800 p-6">
       <div className="max-w-2xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-white">Profile</h1>
+          <h1 className="text-3xl font-bold text-white">
+            {isOwnProfile ? "My Profile" : `${displayUser?.name}'s Profile`}
+          </h1>
           <button
             onClick={() => {
               localStorage.removeItem("authToken");
@@ -115,22 +115,6 @@ export function ProfilePage() {
             <LogOut className="w-4 h-4" />
             Logout
           </button>
-        </div>
-
-        <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-xl p-4 mb-6">
-          <p className="text-yellow-300 text-sm mb-2">🔓 Vulnerability Demo:</p>
-          <p className="text-white/70 text-xs">
-            Try changing the URL to /profile/2 or /profile/3 to view other users' profiles. Then edit to change their data!
-          </p>
-          <input
-            type="number"
-            value={targetUserId}
-            onChange={(e) => setTargetUserId(e.target.value)}
-            onBlur={() => fetchUserProfile(targetUserId)}
-            placeholder="Target User ID"
-            className="w-full mt-3 px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-yellow-400 focus:bg-white/10 transition-all"
-          />
-          <p className="text-white/60 text-xs mt-2">User IDs: 1 (Alice), 2 (Bob), 3 (Charlie)</p>
         </div>
 
         <div className="backdrop-blur-xl bg-gradient-to-br from-white/10 to-white/5 border border-white/20 rounded-2xl overflow-hidden">

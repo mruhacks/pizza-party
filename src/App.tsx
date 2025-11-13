@@ -25,6 +25,7 @@ export function App() {
         >
           <Route path="/search" element={<SearchPage />} />
           <Route path="/feed" element={<FeedPage />} />
+          <Route path="/profile/:id" element={<ProfilePage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/" element={<Navigate to="/search" replace />} />
         </Route>

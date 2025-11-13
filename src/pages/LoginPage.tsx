@@ -103,9 +103,6 @@ export function LoginPage() {
           </button>
         </form>
 
-        <p className="text-center text-white/60 text-sm mt-6">
-          Try: alice@example.com / password123 or bob@example.com / password456
-        </p>
       </div>
     </div>
   );

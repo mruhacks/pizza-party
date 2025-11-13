@@ -46,7 +46,11 @@ export function SearchPage() {
     setLoading(true);
 
     try {
-      const response = await fetch(`/api/search/pizzas?q=${encodeURIComponent(searchQuery)}`);
+      const lat = location?.latitude || 51.0447;
+      const lng = location?.longitude || -114.0719;
+      const response = await fetch(
+        `/api/search/pizzas?q=${encodeURIComponent(searchQuery)}&lat=${lat}&lng=${lng}`
+      );
       const data = await response.json();
 
       if (!response.ok) {

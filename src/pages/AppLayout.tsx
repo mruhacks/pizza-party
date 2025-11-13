@@ -13,14 +13,21 @@ export function AppLayout() {
   const location = useLocation();
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  
+  const userId = localStorage.getItem("userId");
 
   const navItems = [
     { path: "/feed", label: "Feed", icon: Home },
     { path: "/search", label: "Search", icon: Map },
-    { path: "/profile", label: "Profile", icon: User },
+    { path: `/profile/${userId}`, label: "Profile", icon: User },
   ];
 
-  const isActive = (path: string) => location.pathname === path;
+  const isActive = (path: string) => {
+    if (path.includes("/profile") && location.pathname.includes("/profile")) {
+      return true;
+    }
+    return location.pathname === path;
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800">
