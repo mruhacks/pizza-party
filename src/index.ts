@@ -61,7 +61,10 @@ const server = serve({
               ) AS avg_rizz,
               (
                 SELECT ROUND(AVG(experience_rating)::numeric,1) FROM posts WHERE pizza_id = p.id AND experience_rating IS NOT NULL
-              ) AS avg_experience
+              ) AS avg_experience,
+              (
+                SELECT COUNT(*) FROM posts WHERE pizza_id = p.id AND (happiness_rating IS NOT NULL OR rizz_rating IS NOT NULL OR experience_rating IS NOT NULL)
+              ) AS review_count
               FROM pizzas p`;
             result = await pool.query(query);
           } else {
@@ -74,7 +77,10 @@ const server = serve({
               ) AS avg_rizz,
               (
                 SELECT ROUND(AVG(experience_rating)::numeric,1) FROM posts WHERE pizza_id = p.id AND experience_rating IS NOT NULL
-              ) AS avg_experience
+              ) AS avg_experience,
+              (
+                SELECT COUNT(*) FROM posts WHERE pizza_id = p.id AND (happiness_rating IS NOT NULL OR rizz_rating IS NOT NULL OR experience_rating IS NOT NULL)
+              ) AS review_count
               FROM pizzas p WHERE name ILIKE '%${q}%'`;
             result = await pool.query(query);
           }
@@ -89,6 +95,7 @@ const server = serve({
             avg_happiness: shop.avg_happiness ? parseFloat(shop.avg_happiness) : null,
             avg_rizz: shop.avg_rizz ? parseFloat(shop.avg_rizz) : null,
             avg_experience: shop.avg_experience ? parseFloat(shop.avg_experience) : null,
+            review_count: parseInt(shop.review_count) || 0,
           }));
 
           // Sort by distance (closest first)
