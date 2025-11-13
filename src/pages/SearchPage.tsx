@@ -134,12 +134,23 @@ export function SearchPage() {
           <form onSubmit={handleSearch}>
             <div className="relative">
               <Search className="absolute left-4 top-3.5 w-5 h-5 text-purple-400 pointer-events-none" />
-              <input
-                type="text"
+              <textarea
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search for pizza shops..."
-                className="w-full pl-12 pr-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-purple-400 focus:bg-white/15 transition-all"
+                rows={1}
+                className="w-full pl-12 pr-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-purple-400 focus:bg-white/15 transition-all resize-none overflow-hidden min-h-[48px]"
+                onInput={(e) => {
+                  const target = e.target as HTMLTextAreaElement;
+                  target.style.height = 'auto';
+                  target.style.height = target.scrollHeight + 'px';
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSearch(e as any);
+                  }
+                }}
               />
             </div>
           </form>
