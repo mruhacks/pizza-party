@@ -125,19 +125,109 @@ export async function initDatabase() {
     // Check if posts exist
     const postCount = await client.query("SELECT COUNT(*) FROM posts");
     if (parseInt(postCount.rows[0].count) === 0) {
-      // Seed some initial posts
+      // Seed posts with varied ratings across different shops
+      // Top tier shops (Spacca Napoli #16, Noble Pie #10, Pulcinella #9, UNA Pizza #11, Without Papers #21)
+      // Mid tier shops (Blaze #15, Famoso #8, Chicago Deep Dish #6, Village Flatbread #12)
+      // Lower tier shops (University Pizza #1, Pizza 73 #7, Domino's #3)
       await client.query(`
         INSERT INTO posts (user_id, content, photo_url, pizza_id, happiness_rating, rizz_rating, experience_rating, created_at) VALUES
-        (1, 'Just picked up this beauty from Spacca Napoli! The crust is perfection 😍🍕', 'https://images.unsplash.com/photo-1598610089897-a1b0557c95d8?w=600&h=600&fit=crop', 16, 5, 4, 5, NOW() - INTERVAL '2 hours'),
-        (3, 'Study break = pizza break! Blaze Pizza never disappoints 📚✨', 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&h=600&fit=crop', 15, 4, 5, 4, NOW() - INTERVAL '10 hours'),
+        -- Spacca Napoli (Top Tier - Amazing taste, great vibe, good service - 8 reviews)
+        (1, 'Just picked up this beauty from Spacca Napoli! The crust is perfection 😍🍕', 'https://images.unsplash.com/photo-1598610089897-a1b0557c95d8?w=600&h=600&fit=crop', 16, 5, 5, 4, NOW() - INTERVAL '2 hours'),
+        (3, 'Spacca Napoli is my weekly go-to. Never disappoints!', NULL, 16, 5, 4, 3, NOW() - INTERVAL '3 days'),
+        (2, 'The Neapolitan style at Spacca is authentic and amazing', NULL, 16, 5, 5, 4, NOW() - INTERVAL '5 days'),
+        (4, 'Best pizza in Calgary hands down. Spacca Napoli 🔥', 'https://images.unsplash.com/photo-1593560708920-61dd98c46a4e?w=600&h=600&fit=crop', 16, 5, 5, 3, NOW() - INTERVAL '1 week'),
+        (5, 'Had a pizza party catered by Spacca - everyone loved it!', NULL, 16, 5, 4, 4, NOW() - INTERVAL '10 days'),
+        (1, 'Wood fired perfection. Their margherita is unreal', NULL, 16, 5, 5, 3, NOW() - INTERVAL '2 weeks'),
+        (3, 'Spacca Napoli never misses. The atmosphere is great too', NULL, 16, 4, 5, 4, NOW() - INTERVAL '3 weeks'),
+        (2, 'Got the quattro formaggi - incredible cheese blend!', 'https://images.unsplash.com/photo-1571407970349-bc81e7e96c47?w=600&h=600&fit=crop', 16, 5, 4, 3, NOW() - INTERVAL '1 month'),
+        
+        -- Noble Pie Parlour (Top Tier - Great taste, amazing atmosphere/date spot, excellent service - 7 reviews)
+        (3, 'Found this gem near campus! Noble Pie Parlour is my new favorite spot 💜', 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=600&h=600&fit=crop', 10, 4, 5, 5, NOW() - INTERVAL '1 day'),
+        (1, 'Noble Pie has the best crust in the city', NULL, 10, 5, 5, 5, NOW() - INTERVAL '4 days'),
+        (4, 'Love the creative toppings at Noble Pie!', NULL, 10, 4, 5, 5, NOW() - INTERVAL '6 days'),
+        (5, 'Their seasonal pizzas are always incredible', 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&h=600&fit=crop', 10, 5, 5, 4, NOW() - INTERVAL '9 days'),
+        (2, 'Noble Pie never disappoints. Great vibes too', NULL, 10, 4, 5, 5, NOW() - INTERVAL '2 weeks'),
+        (3, 'The honey drizzle on their pizza is chef''s kiss', NULL, 10, 5, 5, 4, NOW() - INTERVAL '3 weeks'),
+        (1, 'Perfect date night spot. Amazing pizza and wine selection', NULL, 10, 4, 5, 5, NOW() - INTERVAL '1 month'),
+        
+        -- Pulcinella (Top Tier - Exceptional taste, cozy vibe, decent service - 6 reviews)
+        (4, 'That wood-fired flavor from Pulcinella is unmatched! Fresh basil makes everything better 🌿', 'https://images.unsplash.com/photo-1590534047230-c8e4e9ec04e0?w=600&h=600&fit=crop', 9, 5, 4, 3, NOW() - INTERVAL '2 days'),
+        (2, 'Pulcinella has the most authentic Italian pizza', NULL, 9, 5, 4, 4, NOW() - INTERVAL '5 days'),
+        (5, 'Their prosciutto e rucola is incredible', 'https://images.unsplash.com/photo-1604068549290-dea0e4a305ca?w=600&h=600&fit=crop', 9, 5, 4, 3, NOW() - INTERVAL '8 days'),
+        (1, 'Love the cozy atmosphere at Pulcinella', NULL, 9, 4, 5, 4, NOW() - INTERVAL '12 days'),
+        (3, 'Best pizza in Kensington. Period.', NULL, 9, 5, 4, 3, NOW() - INTERVAL '2 weeks'),
+        (4, 'Their tiramisu is also amazing btw', NULL, 9, 5, 5, 4, NOW() - INTERVAL '3 weeks'),
+        
+        -- UNA Pizza + Wine (Top Tier - Excellent taste, premium atmosphere, outstanding service - 6 reviews)
         (2, 'Date night at UNA Pizza + Wine was incredible! That truffle mushroom pizza though... 🔥', 'https://images.unsplash.com/photo-1571997478779-2adcbbe9ab2f?w=600&h=600&fit=crop', 11, 5, 5, 5, NOW() - INTERVAL '12 hours'),
-        (4, 'Chicago deep dish hitting different on a Friday night! Who else is team thick crust? 🍕💯', 'https://images.unsplash.com/photo-1628840042765-356cda07504e?w=600&h=600&fit=crop', 6, 4, 3, 4, NOW() - INTERVAL '15 hours'),
-        (5, 'Trying Without Papers Pizza for the first time and WOW! Best margherita in Calgary? 🤔', 'https://images.unsplash.com/photo-1604068549290-dea0e4a305ca?w=600&h=600&fit=crop', 21, 4, 4, 5, NOW() - INTERVAL '16 hours'),
-        (1, 'Late night cravings satisfied! Nothing beats a classic pepperoni 🌙🍕', 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&h=600&fit=crop', 1, 3, 3, 3, NOW() - INTERVAL '18 hours'),
-        (3, 'Found this gem near campus! Noble Pie Parlour is my new favorite spot 💜', 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=600&h=600&fit=crop', 10, 5, 4, 5, NOW() - INTERVAL '1 day'),
-        (2, 'Sunday funday with friends and pizza! Can''t go wrong with Famoso 🙌', 'https://images.unsplash.com/photo-1595854341625-f33ee10dbf94?w=600&h=600&fit=crop', 8, 4, 4, 4, NOW() - INTERVAL '1 day 6 hours'),
-        (4, 'That wood-fired flavor from Pulcinella is unmatched! Fresh basil makes everything better 🌿', 'https://images.unsplash.com/photo-1590534047230-c8e4e9ec04e0?w=600&h=600&fit=crop', 9, 5, 5, 5, NOW() - INTERVAL '2 days'),
-        (5, 'Pizza party for the win! Thanks Village Flatbread for feeding the whole crew 🎉', 'https://images.unsplash.com/photo-1571407970349-bc81e7e96c47?w=600&h=600&fit=crop', 12, 4, 5, 4, NOW() - INTERVAL '2 days 8 hours')
+        (5, 'UNA is upscale but so worth it. Amazing quality', NULL, 11, 4, 5, 5, NOW() - INTERVAL '4 days'),
+        (1, 'Their wine pairing is perfect. And the pizza? *chef''s kiss*', NULL, 11, 4, 5, 5, NOW() - INTERVAL '7 days'),
+        (3, 'UNA Pizza has the best truffle pizza in Calgary', 'https://images.unsplash.com/photo-1595854341625-f33ee10dbf94?w=600&h=600&fit=crop', 11, 5, 5, 4, NOW() - INTERVAL '11 days'),
+        (4, 'Classy spot, incredible flavors. A bit pricey but worth it', NULL, 11, 4, 5, 5, NOW() - INTERVAL '2 weeks'),
+        (2, 'Their burrata appetizer + pizza combo is perfect', NULL, 11, 5, 5, 5, NOW() - INTERVAL '3 weeks'),
+        
+        -- Without Papers Pizza (Top Tier - Outstanding taste, simple/minimalist vibe, basic service - 5 reviews)
+        (5, 'Trying Without Papers Pizza for the first time and WOW! Best margherita in Calgary? 🤔', 'https://images.unsplash.com/photo-1604068549290-dea0e4a305ca?w=600&h=600&fit=crop', 21, 5, 3, 3, NOW() - INTERVAL '16 hours'),
+        (1, 'Without Papers lives up to the hype. That crust!', NULL, 21, 5, 3, 4, NOW() - INTERVAL '5 days'),
+        (3, 'Simple menu but everything is executed perfectly', NULL, 21, 5, 3, 3, NOW() - INTERVAL '9 days'),
+        (4, 'Their marinara is so good it doesn''t even need cheese', NULL, 21, 5, 2, 3, NOW() - INTERVAL '2 weeks'),
+        (2, 'Hillhurst''s best kept secret. Don''t sleep on this place', NULL, 21, 5, 3, 4, NOW() - INTERVAL '3 weeks'),
+        
+        -- Blaze Pizza (Mid Tier - Decent taste, fun build-your-own vibe, fast service - 5 reviews)
+        (3, 'Study break = pizza break! Blaze Pizza never disappoints 📚✨', 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&h=600&fit=crop', 15, 3, 4, 5, NOW() - INTERVAL '10 hours'),
+        (2, 'Blaze is great when you want to customize everything', NULL, 15, 3, 4, 4, NOW() - INTERVAL '3 days'),
+        (5, 'Fast, affordable, and tasty. Perfect for lunch', NULL, 15, 3, 3, 5, NOW() - INTERVAL '6 days'),
+        (1, 'Love that you can build your own at Blaze', NULL, 15, 3, 4, 4, NOW() - INTERVAL '10 days'),
+        (4, 'Decent pizza for the price. Nothing mind-blowing', NULL, 15, 3, 3, 4, NOW() - INTERVAL '2 weeks'),
+        
+        -- Famoso (Mid Tier - Good taste, casual group vibe, average service - 5 reviews)
+        (2, 'Sunday funday with friends and pizza! Can''t go wrong with Famoso 🙌', 'https://images.unsplash.com/photo-1595854341625-f33ee10dbf94?w=600&h=600&fit=crop', 8, 4, 4, 3, NOW() - INTERVAL '1 day 6 hours'),
+        (4, 'Famoso is consistently good. Their pepperoni is solid', NULL, 8, 4, 3, 3, NOW() - INTERVAL '5 days'),
+        (1, 'Good for groups. Reliable quality', NULL, 8, 4, 4, 3, NOW() - INTERVAL '8 days'),
+        (3, 'Famoso hits the spot when you need something quick', NULL, 8, 3, 3, 4, NOW() - INTERVAL '12 days'),
+        (5, 'Their gluten-free options are pretty good', NULL, 8, 4, 3, 3, NOW() - INTERVAL '2 weeks'),
+        
+        -- Chicago Deep Dish Pizza Co (Mid Tier - Hearty/filling, casual vibe, okay service - 4 reviews)
+        (4, 'Chicago deep dish hitting different on a Friday night! Who else is team thick crust? 🍕💯', 'https://images.unsplash.com/photo-1628840042765-356cda07504e?w=600&h=600&fit=crop', 6, 4, 3, 3, NOW() - INTERVAL '15 hours'),
+        (2, 'If you like deep dish, this is your spot', NULL, 6, 4, 2, 3, NOW() - INTERVAL '4 days'),
+        (1, 'Heavy but delicious. Come hungry!', NULL, 6, 4, 3, 2, NOW() - INTERVAL '8 days'),
+        (5, 'Not traditional but satisfying in its own way', NULL, 6, 3, 3, 3, NOW() - INTERVAL '2 weeks'),
+        
+        -- Village Flatbread (Mid Tier - Tasty/unique, fun party vibe, good service - 4 reviews)
+        (5, 'Pizza party for the win! Thanks Village Flatbread for feeding the whole crew 🎉', 'https://images.unsplash.com/photo-1571407970349-bc81e7e96c47?w=600&h=600&fit=crop', 12, 3, 5, 4, NOW() - INTERVAL '2 days 8 hours'),
+        (3, 'Village Flatbread is great for casual dining', NULL, 12, 3, 4, 4, NOW() - INTERVAL '6 days'),
+        (1, 'Their flatbreads are unique and tasty', NULL, 12, 4, 4, 3, NOW() - INTERVAL '10 days'),
+        (4, 'Good spot for families. Nice variety', NULL, 12, 3, 5, 4, NOW() - INTERVAL '2 weeks'),
+        
+        -- University Pizza (Lower Tier - Meh taste, no vibe, convenient late night - 4 reviews)
+        (1, 'Late night cravings satisfied! Nothing beats a classic pepperoni 🌙🍕', 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&h=600&fit=crop', 1, 2, 2, 4, NOW() - INTERVAL '18 hours'),
+        (3, 'University Pizza is cheap and open late. That''s about it', NULL, 1, 2, 1, 4, NOW() - INTERVAL '4 days'),
+        (2, 'It''s fine for a late night student meal', NULL, 1, 2, 2, 3, NOW() - INTERVAL '7 days'),
+        (5, 'Not great but gets the job done when you''re desperate', NULL, 1, 2, 1, 3, NOW() - INTERVAL '2 weeks'),
+        
+        -- Pizza 73 (Lower Tier - Below average taste, no ambiance, fast delivery - 3 reviews)
+        (4, 'Pizza 73 delivered fast but quality is meh', NULL, 7, 2, 1, 4, NOW() - INTERVAL '3 days'),
+        (1, 'Convenient delivery option but wouldn''t be my first choice', NULL, 7, 2, 2, 4, NOW() - INTERVAL '8 days'),
+        (2, 'It''s pizza. It exists. That''s all I can say', NULL, 7, 2, 1, 3, NOW() - INTERVAL '2 weeks'),
+        
+        -- Domino''s (Lower Tier - Mediocre taste, corporate vibe, consistent/reliable - 3 reviews)
+        (3, 'Domino''s for when you just need something quick and cheap', NULL, 3, 2, 2, 3, NOW() - INTERVAL '5 days'),
+        (5, 'Expected Domino''s quality. Got exactly that', NULL, 3, 2, 1, 4, NOW() - INTERVAL '9 days'),
+        (1, 'Does the job but nothing special', NULL, 3, 2, 2, 3, NOW() - INTERVAL '2 weeks'),
+        
+        -- Additional reviews for variety across other shops
+        -- Boston Pizza (Mid Tier - Okay taste, sports bar vibe, good for groups)
+        (2, 'Boston Pizza is reliable for game nights', NULL, 4, 3, 4, 4, NOW() - INTERVAL '6 days'),
+        -- Panago (Mid Tier - Decent taste, no atmosphere, good deals)
+        (4, 'Panago has good deals on Tuesdays', NULL, 5, 3, 2, 4, NOW() - INTERVAL '7 days'),
+        -- Red Swan (Mid-Upper - Good specialty pizzas, hip vibe, decent service)
+        (1, 'Red Swan has interesting specialty pizzas', NULL, 13, 4, 4, 3, NOW() - INTERVAL '9 days'),
+        -- Canadian Pizza Unlimited (Lower-Mid - Basic taste, student vibe, cheap/fast)
+        (3, 'Canadian Pizza Unlimited - decent campus option', NULL, 14, 2, 3, 4, NOW() - INTERVAL '11 days'),
+        -- Double Zero (Upper-Mid - Tasty Italian style, trendy spot, excellent service)
+        (5, 'Double Zero has amazing Italian-style pizza', 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=600&h=600&fit=crop', 18, 4, 5, 5, NOW() - INTERVAL '13 days'),
+        -- Nikos Pizza (Mid - Solid neighborhood pizza, local vibe, friendly)
+        (2, 'Nikos Pizza is a solid neighborhood spot', NULL, 19, 3, 3, 3, NOW() - INTERVAL '15 days')
       `);
     }
 

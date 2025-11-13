@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { MapPin, Search, AlertCircle, Navigation, Star } from "lucide-react";
+import { MapPin, Search, AlertCircle, Navigation, Star, Sparkles } from "lucide-react";
 import { APIProvider, Map, Marker, AdvancedMarker, Pin, InfoWindow } from "@vis.gl/react-google-maps";
 import { GOOGLE_MAPS_API_KEY, DEFAULT_CENTER, DEFAULT_ZOOM } from "../config/maps";
 
@@ -198,7 +198,14 @@ export function SearchPage() {
                   )}
                   <div className="flex-1 min-w-0">
                     <div className="flex justify-between items-start mb-2">
-                      <h3 className="text-white font-semibold text-sm truncate">{shop.name}</h3>
+                      <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                        <h3 className="text-white font-semibold text-sm truncate">{shop.name}</h3>
+                        {/* Show sparkle indicator for top-rated shops (12+ total rating) */}
+                        {shop.avg_happiness && shop.avg_rizz && shop.avg_experience && 
+                         (shop.avg_happiness + shop.avg_rizz + shop.avg_experience) >= 12 && (
+                          <Sparkles className="w-4 h-4 text-yellow-400 fill-yellow-400 flex-shrink-0" />
+                        )}
+                      </div>
                       <span className="text-purple-400 text-xs font-medium bg-purple-400/10 px-2 py-1 rounded-full flex-shrink-0 ml-2">
                         {shop.distance.toFixed(1)} km
                       </span>
