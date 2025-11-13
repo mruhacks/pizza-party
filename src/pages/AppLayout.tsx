@@ -5,9 +5,9 @@ import {
   User,
   Menu,
   X,
-  Zap,
 } from "lucide-react";
 import { useState } from "react";
+import logoSvg from "../favicon/favicon.svg";
 
 export function AppLayout() {
   const location = useLocation();
@@ -34,8 +34,8 @@ export function AppLayout() {
       <nav className="backdrop-blur-xl bg-slate-900/50 border-b border-white/10 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate("/search")}>
-            <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
-              <Zap className="w-6 h-6 text-white" />
+            <div className="w-10 h-10 bg-gradient-to-br from-purple-500/80 to-pink-500/80 backdrop-blur-sm rounded-full flex items-center justify-center p-1.5 shadow-lg border border-white/20">
+              <img src={logoSvg} alt="Pizza Party" className="w-full h-full" />
             </div>
             <h1 className="text-2xl font-bold text-white hidden sm:block">
               Pizza Party
@@ -105,8 +105,8 @@ export function AppLayout() {
       </main>
 
       <div className="fixed bottom-4 right-4 md:hidden">
-        <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center shadow-lg cursor-pointer hover:shadow-lg hover:shadow-purple-500/50 transition-all">
-          <Zap className="w-6 h-6 text-white" />
+        <div className="w-14 h-14 bg-gradient-to-br from-purple-500/80 to-pink-500/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg border border-white/20 cursor-pointer hover:shadow-xl hover:from-purple-600/80 hover:to-pink-600/80 transition-all p-2.5">
+          <img src={logoSvg} alt="Pizza Party" className="w-full h-full" />
         </div>
       </div>
     </div>
