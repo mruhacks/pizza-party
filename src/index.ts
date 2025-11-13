@@ -48,11 +48,16 @@ const server = serve({
           const userLat = parseFloat(url.searchParams.get("lat") || "51.0447");
           const userLng = parseFloat(url.searchParams.get("lng") || "-114.0719");
           
-          // VULNERABLE: String concatenation (SQL injection)
-          // This is intentionally vulnerable - DO NOT USE IN PRODUCTION
-          const query = `SELECT * FROM pizzas WHERE name LIKE '%${q}%' OR address LIKE '%${q}%'`;
-          
-          const result = await pool.query(query);
+          // Secure, parameterized search (case-insensitive). Empty query returns all.
+          let result;
+          let query: string;
+          if (q.trim() === "") {
+            query = "SELECT * FROM pizzas";
+            result = await pool.query(query);
+          } else {
+            query = `SELECT * FROM pizzas WHERE name ILIKE '%${q}%'`;
+            result = await pool.query(query);
+          }
 
           // Map and calculate distances
           const shopsWithDistance = result.rows.map((shop) => ({

@@ -10,6 +10,7 @@ interface PizzaShop {
   lat: number;
   lng: number;
   distance: number;
+  photo_url?: string;
 }
 
 export function SearchPage() {
@@ -158,7 +159,7 @@ export function SearchPage() {
                   onClick={() => handleShopClick(shop)}
                   onMouseEnter={() => setHoveredShop(shop.id)}
                   onMouseLeave={() => setHoveredShop(null)}
-                  className={`p-4 cursor-pointer transition-all ${
+                  className={`p-4 cursor-pointer transition-all flex gap-3 ${
                     selectedShop?.id === shop.id
                       ? "bg-purple-500/20 border-l-4 border-purple-400"
                       : hoveredShop === shop.id
@@ -166,16 +167,25 @@ export function SearchPage() {
                       : "hover:bg-white/5"
                   }`}
                 >
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="text-white font-semibold text-sm">{shop.name}</h3>
-                    <span className="text-purple-400 text-xs font-medium bg-purple-400/10 px-2 py-1 rounded-full">
-                      {shop.distance.toFixed(1)} km
-                    </span>
-                  </div>
-                  <p className="text-white/60 text-xs mb-2">{shop.address}</p>
-                  <div className="flex items-center gap-1 text-white/40 text-xs">
-                    <MapPin className="w-3 h-3" />
-                    <span>{shop.lat.toFixed(4)}, {shop.lng.toFixed(4)}</span>
+                  {shop.photo_url && (
+                    <img
+                      src={shop.photo_url}
+                      alt={shop.name}
+                      className="w-20 h-20 rounded-lg object-cover flex-shrink-0"
+                    />
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex justify-between items-start mb-2">
+                      <h3 className="text-white font-semibold text-sm truncate">{shop.name}</h3>
+                      <span className="text-purple-400 text-xs font-medium bg-purple-400/10 px-2 py-1 rounded-full flex-shrink-0 ml-2">
+                        {shop.distance.toFixed(1)} km
+                      </span>
+                    </div>
+                    <p className="text-white/60 text-xs mb-2 line-clamp-2">{shop.address}</p>
+                    <div className="flex items-center gap-1 text-white/40 text-xs">
+                      <MapPin className="w-3 h-3" />
+                      <span>{shop.lat.toFixed(4)}, {shop.lng.toFixed(4)}</span>
+                    </div>
                   </div>
                 </div>
               ))}
