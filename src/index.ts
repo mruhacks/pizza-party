@@ -52,36 +52,10 @@ const server = serve({
           let result;
           let query: string;
           if (q.trim() === "") {
-            query = `SELECT p.*, 
-              (
-                SELECT ROUND(AVG(happiness_rating)::numeric,1) FROM posts WHERE pizza_id = p.id AND happiness_rating IS NOT NULL
-              ) AS avg_happiness,
-              (
-                SELECT ROUND(AVG(rizz_rating)::numeric,1) FROM posts WHERE pizza_id = p.id AND rizz_rating IS NOT NULL
-              ) AS avg_rizz,
-              (
-                SELECT ROUND(AVG(experience_rating)::numeric,1) FROM posts WHERE pizza_id = p.id AND experience_rating IS NOT NULL
-              ) AS avg_experience,
-              (
-                SELECT COUNT(*) FROM posts WHERE pizza_id = p.id AND (happiness_rating IS NOT NULL OR rizz_rating IS NOT NULL OR experience_rating IS NOT NULL)
-              ) AS review_count
-              FROM pizzas p`;
+            query = `SELECT * FROM pizza_info`;
             result = await pool.query(query);
           } else {
-            query = `SELECT p.*, 
-              (
-                SELECT ROUND(AVG(happiness_rating)::numeric,1) FROM posts WHERE pizza_id = p.id AND happiness_rating IS NOT NULL
-              ) AS avg_happiness,
-              (
-                SELECT ROUND(AVG(rizz_rating)::numeric,1) FROM posts WHERE pizza_id = p.id AND rizz_rating IS NOT NULL
-              ) AS avg_rizz,
-              (
-                SELECT ROUND(AVG(experience_rating)::numeric,1) FROM posts WHERE pizza_id = p.id AND experience_rating IS NOT NULL
-              ) AS avg_experience,
-              (
-                SELECT COUNT(*) FROM posts WHERE pizza_id = p.id AND (happiness_rating IS NOT NULL OR rizz_rating IS NOT NULL OR experience_rating IS NOT NULL)
-              ) AS review_count
-              FROM pizzas p WHERE name ILIKE '%${q}%'`;
+            query = `SELECT * FROM pizza_info WHERE name ILIKE '%${q}%'`;
             result = await pool.query(query);
           }
 
@@ -107,6 +81,7 @@ const server = serve({
             results: shopsWithDistance,
           });
         } catch (error) {
+          console.log(error);
           return Response.json(
             {
               error: "Search failed",

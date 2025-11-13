@@ -74,6 +74,49 @@ export async function initDatabase() {
     await client.query(`ALTER TABLE posts ADD COLUMN IF NOT EXISTS rizz_rating INTEGER CHECK (rizz_rating BETWEEN 1 AND 5);`);
     await client.query(`ALTER TABLE posts ADD COLUMN IF NOT EXISTS experience_rating INTEGER CHECK (experience_rating BETWEEN 1 AND 5);`);
 
+    // Create or replace the pizza info view
+    await client.query(`
+      CREATE OR REPLACE VIEW pizza_info AS
+      SELECT 
+        p.*,
+        ROUND(AVG(posts.happiness_rating)::numeric, 1) AS avg_happiness,
+        ROUND(AVG(posts.rizz_rating)::numeric, 1) AS avg_rizz,
+        ROUND(AVG(posts.experience_rating)::numeric, 1) AS avg_experience,
+        COUNT(*) FILTER (WHERE posts.happiness_rating IS NOT NULL OR posts.rizz_rating IS NOT NULL OR posts.experience_rating IS NOT NULL) AS review_count
+      FROM pizzas p
+      LEFT JOIN posts ON posts.pizza_id = p.id
+      GROUP BY p.id, p.name, p.address, p.lat, p.lng, p.rating, p.price_range, p.photo_url, p.created_at
+    `);
+
+    // Create the trigger function for updating through the view
+    await client.query(`
+      CREATE OR REPLACE FUNCTION update_pizza_info()
+      RETURNS TRIGGER AS $$
+      BEGIN
+        UPDATE pizzas
+        SET
+          name = NEW.name,
+          address = NEW.address,
+          lat = NEW.lat,
+          lng = NEW.lng,
+          rating = NEW.rating,
+          price_range = NEW.price_range,
+          photo_url = NEW.photo_url
+        WHERE id = NEW.id;
+        RETURN NEW;
+      END;
+      $$ LANGUAGE plpgsql;
+    `);
+
+    // Create the instead of update trigger
+    await client.query(`
+      DROP TRIGGER IF EXISTS pizza_info_update ON pizza_info;
+      CREATE TRIGGER pizza_info_update
+      INSTEAD OF UPDATE ON pizza_info
+      FOR EACH ROW
+      EXECUTE FUNCTION update_pizza_info();
+    `);
+
     // Check if users exist
     const userCount = await client.query("SELECT COUNT(*) FROM users");
     if (parseInt(userCount.rows[0].count) === 0) {
