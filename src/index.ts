@@ -52,10 +52,30 @@ const server = serve({
           let result;
           let query: string;
           if (q.trim() === "") {
-            query = "SELECT * FROM pizzas";
+            query = `SELECT p.*, 
+              (
+                SELECT ROUND(AVG(happiness_rating)::numeric,1) FROM posts WHERE pizza_id = p.id AND happiness_rating IS NOT NULL
+              ) AS avg_happiness,
+              (
+                SELECT ROUND(AVG(rizz_rating)::numeric,1) FROM posts WHERE pizza_id = p.id AND rizz_rating IS NOT NULL
+              ) AS avg_rizz,
+              (
+                SELECT ROUND(AVG(experience_rating)::numeric,1) FROM posts WHERE pizza_id = p.id AND experience_rating IS NOT NULL
+              ) AS avg_experience
+              FROM pizzas p`;
             result = await pool.query(query);
           } else {
-            query = `SELECT * FROM pizzas WHERE name ILIKE '%${q}%'`;
+            query = `SELECT p.*, 
+              (
+                SELECT ROUND(AVG(happiness_rating)::numeric,1) FROM posts WHERE pizza_id = p.id AND happiness_rating IS NOT NULL
+              ) AS avg_happiness,
+              (
+                SELECT ROUND(AVG(rizz_rating)::numeric,1) FROM posts WHERE pizza_id = p.id AND rizz_rating IS NOT NULL
+              ) AS avg_rizz,
+              (
+                SELECT ROUND(AVG(experience_rating)::numeric,1) FROM posts WHERE pizza_id = p.id AND experience_rating IS NOT NULL
+              ) AS avg_experience
+              FROM pizzas p WHERE name ILIKE '%${q}%'`;
             result = await pool.query(query);
           }
 
@@ -66,6 +86,9 @@ const server = serve({
             lng: parseFloat(shop.lng),
             rating: parseFloat(shop.rating),
             distance: calculateDistance(userLat, userLng, parseFloat(shop.lat), parseFloat(shop.lng)),
+            avg_happiness: shop.avg_happiness ? parseFloat(shop.avg_happiness) : null,
+            avg_rizz: shop.avg_rizz ? parseFloat(shop.avg_rizz) : null,
+            avg_experience: shop.avg_experience ? parseFloat(shop.avg_experience) : null,
           }));
 
           // Sort by distance (closest first)
@@ -198,6 +221,9 @@ const server = serve({
               posts.content,
               posts.photo_url,
               posts.pizza_id,
+              posts.happiness_rating,
+              posts.rizz_rating,
+              posts.experience_rating,
               posts.created_at,
               users.name as author_name,
               users.profile_pic_url as author_pic
@@ -218,6 +244,11 @@ const server = serve({
               content: row.content,
               photo_url: row.photo_url,
               createdAt: row.created_at,
+              ratings: {
+                happiness: row.happiness_rating,
+                rizz: row.rizz_rating,
+                experience: row.experience_rating,
+              },
               pizza: row.pizza_id ? {
                 id: row.pizza_id,
                 name: row.pizza_name,
@@ -239,18 +270,27 @@ const server = serve({
       async POST(req) {
         try {
           const body = await req.json();
-          const { userId, content, pizzaId } = body;
+          const { userId, content, pizzaId, happinessRating, rizzRating, experienceRating } = body;
 
           // VULNERABLE: No validation of user ownership
           // Anyone can post as any user!
           const result = await pool.query(
-            "INSERT INTO posts (user_id, content, pizza_id) VALUES ($1, $2, $3) RETURNING *",
-            [userId, content, pizzaId || null]
+            `INSERT INTO posts (user_id, content, pizza_id, happiness_rating, rizz_rating, experience_rating)
+             VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+            [userId, content, pizzaId || null, happinessRating || null, rizzRating || null, experienceRating || null]
           );
 
           const post = result.rows[0];
           const userResult = await pool.query("SELECT * FROM users WHERE id = $1", [userId]);
           const user = userResult.rows[0];
+          let pizzaMeta: any = undefined;
+          if (post.pizza_id) {
+            const pizzaRes = await pool.query("SELECT id, name, lat, lng FROM pizzas WHERE id = $1", [post.pizza_id]);
+            if (pizzaRes.rows.length > 0) {
+              const p = pizzaRes.rows[0];
+              pizzaMeta = { id: p.id, name: p.name, lat: p.lat ? parseFloat(p.lat) : undefined, lng: p.lng ? parseFloat(p.lng) : undefined };
+            }
+          }
 
           return Response.json({
             success: true,
@@ -260,7 +300,12 @@ const server = serve({
               userId: post.user_id,
               content: post.content,
               createdAt: post.created_at,
-              pizza: post.pizza_id ? { id: post.pizza_id } : undefined,
+              ratings: {
+                happiness: post.happiness_rating,
+                rizz: post.rizz_rating,
+                experience: post.experience_rating,
+              },
+              pizza: pizzaMeta,
               author: user ? {
                 id: user.id,
                 name: user.name,

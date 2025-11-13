@@ -11,6 +11,9 @@ interface PizzaShop {
   lng: number;
   distance: number;
   photo_url?: string;
+  avg_happiness?: number | null;
+  avg_rizz?: number | null;
+  avg_experience?: number | null;
 }
 
 export function SearchPage() {
@@ -204,6 +207,19 @@ export function SearchPage() {
                       <MapPin className="w-3 h-3" />
                       <span>{shop.lat.toFixed(4)}, {shop.lng.toFixed(4)}</span>
                     </div>
+                    {(shop.avg_happiness || shop.avg_rizz || shop.avg_experience) && (
+                      <div className="mt-2 flex flex-wrap gap-2 text-[10px] text-white/60">
+                        {shop.avg_happiness && (
+                          <span className="px-2 py-1 rounded bg-pink-500/10 border border-pink-400/20 text-pink-300 font-medium">Happy {shop.avg_happiness.toFixed(1)}</span>
+                        )}
+                        {shop.avg_rizz && (
+                          <span className="px-2 py-1 rounded bg-cyan-500/10 border border-cyan-400/20 text-cyan-300 font-medium">Rizz {shop.avg_rizz.toFixed(1)}</span>
+                        )}
+                        {shop.avg_experience && (
+                          <span className="px-2 py-1 rounded bg-purple-500/10 border border-purple-400/20 text-purple-300 font-medium">Exp {shop.avg_experience.toFixed(1)}</span>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}
@@ -255,6 +271,19 @@ export function SearchPage() {
                     <p className="text-xs text-purple-600 font-medium">
                       {selectedShop.distance.toFixed(1)} km away
                     </p>
+                    {(selectedShop.avg_happiness || selectedShop.avg_rizz || selectedShop.avg_experience) && (
+                      <div className="mt-2 flex gap-2 flex-wrap text-[10px]">
+                        {selectedShop.avg_happiness && (
+                          <span className="px-2 py-1 rounded bg-pink-500/10 text-pink-500">Happy {selectedShop.avg_happiness.toFixed(1)}</span>
+                        )}
+                        {selectedShop.avg_rizz && (
+                          <span className="px-2 py-1 rounded bg-cyan-500/10 text-cyan-500">Rizz {selectedShop.avg_rizz.toFixed(1)}</span>
+                        )}
+                        {selectedShop.avg_experience && (
+                          <span className="px-2 py-1 rounded bg-purple-500/10 text-purple-500">Exp {selectedShop.avg_experience.toFixed(1)}</span>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </InfoWindow>
               )}

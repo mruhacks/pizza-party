@@ -47,6 +47,9 @@ export async function initDatabase() {
         content TEXT NOT NULL,
         photo_url TEXT,
         pizza_id INTEGER REFERENCES pizzas(id),
+        happiness_rating INTEGER CHECK (happiness_rating BETWEEN 1 AND 5),
+        rizz_rating INTEGER CHECK (rizz_rating BETWEEN 1 AND 5),
+        experience_rating INTEGER CHECK (experience_rating BETWEEN 1 AND 5),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
@@ -65,6 +68,11 @@ export async function initDatabase() {
     await client.query(`
       ALTER TABLE posts ADD COLUMN IF NOT EXISTS pizza_id INTEGER REFERENCES pizzas(id);
     `);
+
+    // Migrations: Add rating columns if not exist
+    await client.query(`ALTER TABLE posts ADD COLUMN IF NOT EXISTS happiness_rating INTEGER CHECK (happiness_rating BETWEEN 1 AND 5);`);
+    await client.query(`ALTER TABLE posts ADD COLUMN IF NOT EXISTS rizz_rating INTEGER CHECK (rizz_rating BETWEEN 1 AND 5);`);
+    await client.query(`ALTER TABLE posts ADD COLUMN IF NOT EXISTS experience_rating INTEGER CHECK (experience_rating BETWEEN 1 AND 5);`);
 
     // Check if users exist
     const userCount = await client.query("SELECT COUNT(*) FROM users");
@@ -119,17 +127,17 @@ export async function initDatabase() {
     if (parseInt(postCount.rows[0].count) === 0) {
       // Seed some initial posts
       await client.query(`
-        INSERT INTO posts (user_id, content, photo_url, pizza_id, created_at) VALUES
-        (1, 'Just picked up this beauty from Spacca Napoli! The crust is perfection 😍🍕', 'https://images.unsplash.com/photo-1598610089897-a1b0557c95d8?w=600&h=600&fit=crop', 16, NOW() - INTERVAL '2 hours'),
-        (3, 'Study break = pizza break! Blaze Pizza never disappoints 📚✨', 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&h=600&fit=crop', 15, NOW() - INTERVAL '10 hours'),
-        (2, 'Date night at UNA Pizza + Wine was incredible! That truffle mushroom pizza though... 🔥', 'https://images.unsplash.com/photo-1571997478779-2adcbbe9ab2f?w=600&h=600&fit=crop', 11, NOW() - INTERVAL '12 hours'),
-        (4, 'Chicago deep dish hitting different on a Friday night! Who else is team thick crust? 🍕💯', 'https://images.unsplash.com/photo-1628840042765-356cda07504e?w=600&h=600&fit=crop', 6, NOW() - INTERVAL '15 hours'),
-        (5, 'Trying Without Papers Pizza for the first time and WOW! Best margherita in Calgary? 🤔', 'https://images.unsplash.com/photo-1604068549290-dea0e4a305ca?w=600&h=600&fit=crop', 21, NOW() - INTERVAL '16 hours'),
-        (1, 'Late night cravings satisfied! Nothing beats a classic pepperoni 🌙🍕', 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&h=600&fit=crop', 1, NOW() - INTERVAL '18 hours'),
-        (3, 'Found this gem near campus! Noble Pie Parlour is my new favorite spot 💜', 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=600&h=600&fit=crop', 10, NOW() - INTERVAL '1 day'),
-        (2, 'Sunday funday with friends and pizza! Can''t go wrong with Famoso 🙌', 'https://images.unsplash.com/photo-1595854341625-f33ee10dbf94?w=600&h=600&fit=crop', 8, NOW() - INTERVAL '1 day 6 hours'),
-        (4, 'That wood-fired flavor from Pulcinella is unmatched! Fresh basil makes everything better 🌿', 'https://images.unsplash.com/photo-1590534047230-c8e4e9ec04e0?w=600&h=600&fit=crop', 9, NOW() - INTERVAL '2 days'),
-        (5, 'Pizza party for the win! Thanks Village Flatbread for feeding the whole crew 🎉', 'https://images.unsplash.com/photo-1571407970349-bc81e7e96c47?w=600&h=600&fit=crop', 12, NOW() - INTERVAL '2 days 8 hours')
+        INSERT INTO posts (user_id, content, photo_url, pizza_id, happiness_rating, rizz_rating, experience_rating, created_at) VALUES
+        (1, 'Just picked up this beauty from Spacca Napoli! The crust is perfection 😍🍕', 'https://images.unsplash.com/photo-1598610089897-a1b0557c95d8?w=600&h=600&fit=crop', 16, 5, 4, 5, NOW() - INTERVAL '2 hours'),
+        (3, 'Study break = pizza break! Blaze Pizza never disappoints 📚✨', 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&h=600&fit=crop', 15, 4, 5, 4, NOW() - INTERVAL '10 hours'),
+        (2, 'Date night at UNA Pizza + Wine was incredible! That truffle mushroom pizza though... 🔥', 'https://images.unsplash.com/photo-1571997478779-2adcbbe9ab2f?w=600&h=600&fit=crop', 11, 5, 5, 5, NOW() - INTERVAL '12 hours'),
+        (4, 'Chicago deep dish hitting different on a Friday night! Who else is team thick crust? 🍕💯', 'https://images.unsplash.com/photo-1628840042765-356cda07504e?w=600&h=600&fit=crop', 6, 4, 3, 4, NOW() - INTERVAL '15 hours'),
+        (5, 'Trying Without Papers Pizza for the first time and WOW! Best margherita in Calgary? 🤔', 'https://images.unsplash.com/photo-1604068549290-dea0e4a305ca?w=600&h=600&fit=crop', 21, 4, 4, 5, NOW() - INTERVAL '16 hours'),
+        (1, 'Late night cravings satisfied! Nothing beats a classic pepperoni 🌙🍕', 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&h=600&fit=crop', 1, 3, 3, 3, NOW() - INTERVAL '18 hours'),
+        (3, 'Found this gem near campus! Noble Pie Parlour is my new favorite spot 💜', 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=600&h=600&fit=crop', 10, 5, 4, 5, NOW() - INTERVAL '1 day'),
+        (2, 'Sunday funday with friends and pizza! Can''t go wrong with Famoso 🙌', 'https://images.unsplash.com/photo-1595854341625-f33ee10dbf94?w=600&h=600&fit=crop', 8, 4, 4, 4, NOW() - INTERVAL '1 day 6 hours'),
+        (4, 'That wood-fired flavor from Pulcinella is unmatched! Fresh basil makes everything better 🌿', 'https://images.unsplash.com/photo-1590534047230-c8e4e9ec04e0?w=600&h=600&fit=crop', 9, 5, 5, 5, NOW() - INTERVAL '2 days'),
+        (5, 'Pizza party for the win! Thanks Village Flatbread for feeding the whole crew 🎉', 'https://images.unsplash.com/photo-1571407970349-bc81e7e96c47?w=600&h=600&fit=crop', 12, 4, 5, 4, NOW() - INTERVAL '2 days 8 hours')
       `);
     }
 

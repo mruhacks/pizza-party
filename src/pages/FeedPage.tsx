@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Heart, MessageCircle, Share2, MapPin } from "lucide-react";
+import { Heart, MessageCircle, Share2, MapPin, Star } from "lucide-react";
 
 interface Post {
   id: number;
@@ -14,6 +14,11 @@ interface Post {
     lat?: number;
     lng?: number;
   };
+  ratings?: {
+    happiness?: number;
+    rizz?: number;
+    experience?: number;
+  };
 }
 
 interface Author {
@@ -26,6 +31,11 @@ export function FeedPage() {
   const [posts, setPosts] = useState<(Post & { author?: Author })[]>([]);
   const [composing, setComposing] = useState(false);
   const [newPost, setNewPost] = useState("");
+  const [happinessRating, setHappinessRating] = useState<number>(0);
+  const [rizzRating, setRizzRating] = useState<number>(0);
+  const [experienceRating, setExperienceRating] = useState<number>(0);
+  const [pizzas, setPizzas] = useState<{ id: number; name: string }[]>([]);
+  const [selectedPizzaId, setSelectedPizzaId] = useState<number | null>(null);
   const [userId, setUserId] = useState<string>("");
   const [userName, setUserName] = useState<string>("");
   const [profilePic, setProfilePic] = useState<string>("");
@@ -41,6 +51,7 @@ export function FeedPage() {
       setProfilePic("https://i.pravatar.cc/150?img=" + id);
     }
     fetchPosts();
+    fetchPizzas();
   }, []);
 
   const fetchPosts = async () => {
@@ -70,7 +81,10 @@ export function FeedPage() {
         body: JSON.stringify({
           userId: userId,
           content: newPost,
-          // pizzaId could be selected via future UI; omitted here
+          happinessRating: happinessRating || null,
+          rizzRating: rizzRating || null,
+          experienceRating: experienceRating || null,
+          pizzaId: selectedPizzaId || null,
         }),
       });
 
@@ -80,11 +94,30 @@ export function FeedPage() {
         setPosts([data.post, ...posts]);
         setNewPost("");
         setComposing(false);
+        setHappinessRating(0);
+        setRizzRating(0);
+        setExperienceRating(0);
+        setSelectedPizzaId(null);
         setPostMessage("Post created successfully!");
         setTimeout(() => setPostMessage(""), 3000);
       }
     } catch (error) {
       setPostMessage("Failed to create post");
+    }
+  };
+
+  const fetchPizzas = async () => {
+    try {
+      const resp = await fetch(`/api/search/pizzas?q=`);
+      if (resp.ok) {
+        const data = await resp.json();
+        const list = (data.results || []).map((p: any) => ({ id: p.id, name: p.name }));
+        // Sort alphabetically for selection clarity
+        list.sort((a: any, b: any) => a.name.localeCompare(b.name));
+        setPizzas(list);
+      }
+    } catch (e) {
+      // silent fail
     }
   };
 
@@ -127,6 +160,24 @@ export function FeedPage() {
                       className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-purple-400 focus:bg-white/15 transition-all resize-none"
                       rows={4}
                     />
+                    <div className="grid grid-cols-3 gap-3 pt-2">
+                      <RatingSelector label="Happiness" value={happinessRating} onChange={setHappinessRating} color="text-pink-400" />
+                      <RatingSelector label="Rizz" value={rizzRating} onChange={setRizzRating} color="text-cyan-400" />
+                      <RatingSelector label="Experience" value={experienceRating} onChange={setExperienceRating} color="text-purple-400" />
+                    </div>
+                    <div className="pt-4">
+                      <label className="text-white/60 text-xs font-medium mb-1 block">Pizza (optional)</label>
+                      <select
+                        value={selectedPizzaId || ''}
+                        onChange={(e) => setSelectedPizzaId(e.target.value ? parseInt(e.target.value, 10) : null)}
+                        className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white text-sm focus:outline-none focus:border-purple-400 focus:bg-white/15"
+                      >
+                        <option value="" className="text-black">Select a pizza shop...</option>
+                        {pizzas.map(p => (
+                          <option key={p.id} value={p.id} className="text-black">{p.name}</option>
+                        ))}
+                      </select>
+                    </div>
                     <div className="flex gap-2 justify-end">
                       <button
                         onClick={() => {
@@ -199,6 +250,19 @@ export function FeedPage() {
                   </div>
 
                   <p className="text-white/90 mb-4">{post.content}</p>
+                  {post.ratings && (post.ratings.happiness || post.ratings.rizz || post.ratings.experience) && (
+                    <div className="flex gap-4 mb-4 text-xs">
+                      {post.ratings.happiness && (
+                        <SmallRating label="Happy" value={post.ratings.happiness} color="text-pink-400" />
+                      )}
+                      {post.ratings.rizz && (
+                        <SmallRating label="Rizz" value={post.ratings.rizz} color="text-cyan-400" />
+                      )}
+                      {post.ratings.experience && (
+                        <SmallRating label="Exp" value={post.ratings.experience} color="text-purple-400" />
+                      )}
+                    </div>
+                  )}
 
                   {post.pizza?.id && (
                     <button
@@ -249,6 +313,37 @@ export function FeedPage() {
           )}
         </div>
       </div>
+    </div>
+  );
+}
+
+// Components for rating selection & display
+function RatingSelector({ label, value, onChange, color }: { label: string; value: number; onChange: (v: number) => void; color: string }) {
+  return (
+    <div>
+      <p className="text-white/60 text-[11px] mb-1 font-medium">{label}</p>
+      <div className="flex gap-1">
+        {[1,2,3,4,5].map(n => (
+          <button
+            key={n}
+            type="button"
+            onClick={() => onChange(n)}
+            className={`p-1 rounded hover:bg-white/10 transition-colors ${value >= n ? 'text-yellow-400' : 'text-white/20'}`}
+          >
+            <Star className="w-3 h-3" />
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function SmallRating({ label, value, color }: { label: string; value: number; color: string }) {
+  return (
+    <div className="flex items-center gap-1">
+      <Star className={`w-3 h-3 ${color}`} />
+      <span className="text-white/50">{label}</span>
+      <span className="text-white/70 font-semibold">{value}</span>
     </div>
   );
 }
