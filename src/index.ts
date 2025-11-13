@@ -42,6 +42,7 @@ const server = serve({
 
     "/api/search/pizzas": {
       async GET(req) {
+        let query: string = "";
         try {
           const url = new URL(req.url);
           const q = url.searchParams.get("q") || "";
@@ -50,7 +51,6 @@ const server = serve({
 
           // Secure, parameterized search (case-insensitive). Empty query returns all.
           let result;
-          let query: string;
           if (q.trim() === "") {
             query = `SELECT * FROM pizza_info`;
             result = await pool.query(query);
@@ -85,6 +85,7 @@ const server = serve({
           return Response.json(
             {
               error: "Search failed",
+              query: query,
               sqlError: error instanceof Error ? error.message : "Unknown error",
               detail: error instanceof Error && 'detail' in error ? (error as any).detail : undefined,
             },
