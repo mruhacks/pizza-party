@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Mail, Lock, Zap } from "lucide-react";
 
 export function LoginPage() {
-  const [email, setEmail] = useState("alice@example.com");
+  const [email, setEmail] = useState("jed.maxwell5943@yahoo.com");
   const [password, setPassword] = useState("password123");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);

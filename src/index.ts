@@ -297,6 +297,7 @@ const server = serve({
             },
           });
         } catch (error) {
+          console.log(error);
           return Response.json({ error: "Post creation failed" }, { status: 400 });
         }
       },
