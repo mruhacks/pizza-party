@@ -1,21 +1,11 @@
-# bun-react-tailwind-shadcn-template
+# Pizza Party
 
-To install dependencies:
+1. Install dependencies:
+    - [Bun](https://bun.sh/)
+    - [Just](https://github.com/casey/just)
+    - Docker
 
-```bash
-bun install
-```
-
-To start a development server:
-
-```bash
-bun dev
-```
-
-To run for production:
-
-```bash
-bun start
-```
-
-This project was created using `bun init` in bun v1.3.1. [Bun](https://bun.com) is a fast all-in-one JavaScript runtime.
+2. Run app:
+    ```shell
+    just run
+    ```

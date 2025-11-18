@@ -1,6 +1,10 @@
-restart:
-    docker compose down -v && docker compose up -d
-    @sleep 0.5
+start-services:
+    docker compose up -d --wait
 
-run:
+remove-services:
+    docker compose down -v
+
+run: start-services
     bun dev
+
+restart: remove-services run

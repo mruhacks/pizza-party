@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Heart, MessageCircle, Share2, MapPin, Star } from "lucide-react";
+import { Heart, MessageCircle, Share2, MapPin, Star, RefreshCw } from "lucide-react";
 
 interface Post {
   id: number;
@@ -40,6 +40,7 @@ export function FeedPage() {
   const [userName, setUserName] = useState<string>("");
   const [profilePic, setProfilePic] = useState<string>("");
   const [postMessage, setPostMessage] = useState("");
+  const [refreshing, setRefreshing] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -54,7 +55,8 @@ export function FeedPage() {
     fetchPizzas();
   }, []);
 
-  const fetchPosts = async () => {
+  const fetchPosts = async (showLoading = false) => {
+    if (showLoading) setRefreshing(true);
     try {
       const response = await fetch("/api/posts");
       if (response.ok) {
@@ -63,6 +65,10 @@ export function FeedPage() {
       }
     } catch (error) {
       console.error("Failed to fetch posts:", error);
+    } finally {
+      if (showLoading) {
+        setTimeout(() => setRefreshing(false), 500); // Brief delay to show animation
+      }
     }
   };
 
@@ -140,7 +146,18 @@ export function FeedPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800 p-6">
       <div className="max-w-2xl mx-auto">
-        <h1 className="text-3xl font-bold text-white mb-8">Feed</h1>
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-3xl font-bold text-white">Feed</h1>
+          <button
+            onClick={() => fetchPosts(true)}
+            disabled={refreshing}
+            className="flex items-center gap-2 text-white/60 hover:text-white/90 transition-colors disabled:cursor-not-allowed"
+            title="Refresh posts"
+          >
+            <RefreshCw className={`w-5 h-5 ${refreshing ? 'animate-spin' : ''}`} />
+            <span className="text-sm font-medium">Refresh</span>
+          </button>
+        </div>
 
         {userId && (
           <div className="backdrop-blur-xl bg-gradient-to-br from-white/10 to-white/5 border border-white/20 rounded-2xl p-6 mb-6">
