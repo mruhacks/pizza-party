@@ -107,7 +107,7 @@ export function ProfilePage() {
 
     try {
       const arrayBuffer = await file.arrayBuffer();
-      
+
       const response = await fetch(`/api/users/${profileUserId}/profile-pic`, {
         method: "PUT",
         headers: {
@@ -183,29 +183,27 @@ export function ProfilePage() {
                   alt={displayUser?.name}
                   className="w-32 h-32 rounded-full border-4 border-slate-900 object-cover shadow-lg"
                 />
-                {isOwnProfile && (
-                  <>
-                    <button
-                      onClick={() => fileInputRef.current?.click()}
-                      disabled={uploadingImage}
-                      className="absolute bottom-0 right-0 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white p-2 rounded-full shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                      title="Upload new profile picture"
-                    >
-                      {uploadingImage ? (
-                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      ) : (
-                        <Camera className="w-5 h-5" />
-                      )}
-                    </button>
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                      className="hidden"
-                    />
-                  </>
-                )}
+                <>
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={uploadingImage}
+                    className="absolute bottom-0 right-0 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white p-2 rounded-full shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                    title="Upload new profile picture"
+                  >
+                    {uploadingImage ? (
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    ) : (
+                      <Camera className="w-5 h-5" />
+                    )}
+                  </button>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="hidden"
+                  />
+                </>
               </div>
 
               <div className="flex-1 pt-4 w-full">
@@ -313,15 +311,13 @@ export function ProfilePage() {
                       </div>
                     </div>
 
-                    {isOwnProfile && (
-                      <button
-                        onClick={() => setIsEditing(true)}
-                        className="mt-6 flex items-center gap-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold px-6 py-2 rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/50"
-                      >
-                        <Edit2 className="w-4 h-4" />
-                        Edit Profile
-                      </button>
-                    )}
+                    <button
+                      onClick={() => setIsEditing(true)}
+                      className="mt-6 flex items-center gap-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold px-6 py-2 rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/50"
+                    >
+                      <Edit2 className="w-4 h-4" />
+                      Edit Profile
+                    </button>
                   </div>
                 )}
 

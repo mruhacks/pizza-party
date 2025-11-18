@@ -231,14 +231,12 @@ export function FeedPage() {
                     <img
                       src={post.author?.profile_pic_url || `/api/users/${post.userId}/profile-pic`}
                       alt="Author"
-                      className="w-12 h-12 rounded-full object-cover cursor-pointer hover:ring-2 hover:ring-purple-400 transition-all"
-                      onClick={() => navigate(`/profile/${post.userId}`)}
+                      className="w-12 h-12 rounded-full object-cover transition-all"
                     />
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
                         <h3 
-                          className="text-white font-bold cursor-pointer hover:text-purple-400 transition-colors"
-                          onClick={() => navigate(`/profile/${post.userId}`)}
+                          className="text-white font-bold transition-colors"
                         >
                           {post.author?.name || "Unknown"}
                         </h3>
@@ -267,7 +265,7 @@ export function FeedPage() {
                   {post.pizza?.id && (
                     <button
                       onClick={() => navigate(`/search?shopId=${post.pizza?.id}`)}
-                      className="inline-flex items-center gap-2 mb-4 px-3 py-1.5 rounded-full bg-purple-500/20 border border-purple-400/40 text-purple-200 text-xs hover:bg-purple-500/30 hover:border-purple-300 transition-colors"
+                      className="cursor-pointer inline-flex items-center gap-2 mb-4 px-3 py-1.5 rounded-full bg-purple-500/20 border border-purple-400/40 text-purple-200 text-xs hover:bg-purple-500/30 hover:border-purple-300 transition-colors"
                       title="View this pizza shop on the map"
                     >
                       <MapPin className="w-3 h-3" />

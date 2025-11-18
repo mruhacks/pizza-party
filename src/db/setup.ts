@@ -209,7 +209,7 @@ export async function initDatabase() {
       await client.query(`
         INSERT INTO posts (user_id, content, photo_url, pizza_id, happiness_rating, rizz_rating, experience_rating, created_at) VALUES
         -- Spacca Napoli (Top Tier - Amazing taste, great vibe, good service - 8 reviews)
-        (1624, 'Just picked up this beauty from Spacca Napoli! The crust is perfection 😍🍕', 'https://images.unsplash.com/photo-1673993386955-45fc437f5de9?w=600&h=600&fit=crop', 16, 5, 5, 4, NOW() - INTERVAL '2 hours'),
+        (1624, 'Just picked up this beauty from Spacca Napoli! The crust is perfection 😍🍕', 'https://images.unsplash.com/photo-1673993386955-45fc437f5de9?w=600&h=600&fit=crop', 16, 5, 5, 4, NOW() - INTERVAL '10 hours'),
         (1626, 'Spacca Napoli is my weekly go-to. Never disappoints!', NULL, 16, 5, 4, 3, NOW() - INTERVAL '3 days'),
         (1625, 'The Neapolitan style at Spacca is authentic and amazing', NULL, 16, 5, 5, 4, NOW() - INTERVAL '5 days'),
         (1627, 'Best pizza in Calgary hands down. Spacca Napoli 🔥', 'https://images.unsplash.com/photo-1593560708920-61dd98c46a4e?w=600&h=600&fit=crop', 16, 5, 5, 3, NOW() - INTERVAL '1 week'),
@@ -236,7 +236,7 @@ export async function initDatabase() {
         (1627, 'Their tiramisu is also amazing btw', NULL, 9, 5, 5, 4, NOW() - INTERVAL '3 weeks'),
         
         -- UNA Pizza + Wine (Top Tier - Excellent taste, premium atmosphere, outstanding service - 6 reviews)
-        (1625, 'Date night at UNA Pizza + Wine was incredible! That truffle mushroom pizza though... 🔥', 'https://images.unsplash.com/photo-1571997478779-2adcbbe9ab2f?w=600&h=600&fit=crop', 11, 5, 5, 5, NOW() - INTERVAL '12 hours'),
+        (1625, 'Date night at UNA Pizza + Wine was incredible! That truffle mushroom pizza though... 🔥', 'https://images.unsplash.com/photo-1571997478779-2adcbbe9ab2f?w=600&h=600&fit=crop', 11, 5, 5, 5, NOW() - INTERVAL '1 hour'),
         (1628, 'UNA is upscale but so worth it. Amazing quality', NULL, 11, 4, 5, 5, NOW() - INTERVAL '4 days'),
         (1624, 'Their wine pairing is perfect. And the pizza? *chef''s kiss*', NULL, 11, 4, 5, 5, NOW() - INTERVAL '7 days'),
         (1626, 'UNA Pizza has the best truffle pizza in Calgary', 'https://images.unsplash.com/photo-1595854341625-f33ee10dbf94?w=600&h=600&fit=crop', 11, 5, 5, 4, NOW() - INTERVAL '11 days'),
@@ -251,7 +251,7 @@ export async function initDatabase() {
         (1625, 'Hillhurst''s best kept secret. Don''t sleep on this place', NULL, 21, 5, 3, 4, NOW() - INTERVAL '3 weeks'),
         
         -- Blaze Pizza (Mid Tier - Decent taste, fun build-your-own vibe, fast service - 5 reviews)
-        (1626, 'Study break = pizza break! Blaze Pizza never disappoints 📚✨', 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&h=600&fit=crop', 15, 3, 4, 5, NOW() - INTERVAL '10 hours'),
+        (1626, 'Study break = pizza break! Blaze Pizza never disappoints 📚✨', 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&h=600&fit=crop', 15, 3, 4, 5, NOW() - INTERVAL '2 hours'),
         (1625, 'Blaze is great when you want to customize everything', NULL, 15, 3, 4, 4, NOW() - INTERVAL '3 days'),
         (1628, 'Fast, affordable, and tasty. Perfect for lunch', NULL, 15, 3, 3, 5, NOW() - INTERVAL '6 days'),
         (1624, 'Love that you can build your own at Blaze', NULL, 15, 3, 4, 4, NOW() - INTERVAL '10 days'),
