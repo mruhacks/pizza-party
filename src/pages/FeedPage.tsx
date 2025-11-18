@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Heart, MessageCircle, Share2, MapPin, Star } from "lucide-react";
-import { PROFILE_PIC_URL } from "@/config/general";
 
 interface Post {
   id: number;
@@ -49,7 +48,7 @@ export function FeedPage() {
     if (id && name) {
       setUserId(id);
       setUserName(name);
-      setProfilePic(PROFILE_PIC_URL);
+      setProfilePic(`/api/users/${id}/profile-pic`);
     }
     fetchPosts();
     fetchPizzas();
@@ -230,7 +229,7 @@ export function FeedPage() {
                 <div className="p-6">
                   <div className="flex items-start gap-4 mb-4">
                     <img
-                      src={post.author?.profile_pic_url || profilePic}
+                      src={post.author?.profile_pic_url || `/api/users/${post.userId}/profile-pic`}
                       alt="Author"
                       className="w-12 h-12 rounded-full object-cover cursor-pointer hover:ring-2 hover:ring-purple-400 transition-all"
                       onClick={() => navigate(`/profile/${post.userId}`)}

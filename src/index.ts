@@ -117,7 +117,7 @@ const server = serve({
               address: user.address,
               lat: parseFloat(user.lat),
               lng: parseFloat(user.lng),
-              profilePic: user.profile_pic_url,
+              profilePic: `/api/users/${user.id}/profile-pic`,
             },
           });
         } catch (error) {
@@ -185,11 +185,70 @@ const server = serve({
               address: user.address,
               lat: parseFloat(user.lat),
               lng: parseFloat(user.lng),
-              profilePic: user.profile_pic_url,
+              profilePic: `/api/users/${user.id}/profile-pic`,
             },
           });
         } catch (error) {
           return Response.json({ error: "Update failed" }, { status: 400 });
+        }
+      },
+    },
+
+    "/api/users/:id/profile-pic": {
+      async GET(req) {
+        try {
+          const userId = parseInt(req.params.id);
+
+          const result = await pool.query(
+            "SELECT profile_pic_data FROM users WHERE id = $1",
+            [userId]
+          );
+
+          if (result.rows.length === 0 || !result.rows[0].profile_pic_data) {
+            return Response.json({ error: "Profile picture not found" }, { status: 404 });
+          }
+
+          const imageBuffer = result.rows[0].profile_pic_data;
+          
+          // Return image with appropriate content type
+          return new Response(imageBuffer, {
+            headers: {
+              "Content-Type": "image/jpeg",
+              "Cache-Control": "public, max-age=3600",
+            },
+          });
+        } catch (error) {
+          return Response.json({ error: "Failed to fetch profile picture" }, { status: 400 });
+        }
+      },
+
+      async PUT(req) {
+        try {
+          const userId = parseInt(req.params.id);
+          
+          // Get the raw body as array buffer
+          const arrayBuffer = await req.arrayBuffer();
+          const buffer = Buffer.from(arrayBuffer);
+
+          // VULNERABLE: No authorization checks (Broken Access Control)
+          // Anyone can update any user's profile picture!
+          const result = await pool.query(
+            "UPDATE users SET profile_pic_data = $1 WHERE id = $2 RETURNING id",
+            [buffer, userId]
+          );
+
+          if (result.rows.length === 0) {
+            return Response.json({ error: "User not found" }, { status: 404 });
+          }
+
+          return Response.json({
+            success: true,
+            message: "Profile picture updated successfully",
+            profilePic: `/api/users/${userId}/profile-pic`,
+          });
+        } catch (error) {
+          console.error("Profile picture upload error:", error);
+          return Response.json({ error: "Upload failed" }, { status: 400 });
         }
       },
     },
@@ -241,7 +300,7 @@ const server = serve({
               author: {
                 id: row.user_id,
                 name: row.author_name,
-                profile_pic_url: row.author_pic,
+                profile_pic_url: row.user_id ? `/api/users/${row.user_id}/profile-pic` : null,
               },
             })),
           });
@@ -292,7 +351,7 @@ const server = serve({
               author: user ? {
                 id: user.id,
                 name: user.name,
-                profile_pic_url: user.profile_pic_url,
+                profile_pic_url: `/api/users/${user.id}/profile-pic`,
               } : undefined,
             },
           });

@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { User, MapPin, Mail, LogOut, Edit2, Check, X } from "lucide-react";
+import { User, MapPin, Mail, LogOut, Edit2, Check, X, Camera } from "lucide-react";
 
 interface UserProfile {
   id: string;
@@ -17,6 +17,8 @@ export function ProfilePage() {
   const [formData, setFormData] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [saveMessage, setSaveMessage] = useState("");
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 
   const currentUserId = localStorage.getItem("userId");
@@ -66,7 +68,6 @@ export function ProfilePage() {
           name: formData.name,
           email: formData.email,
           address: formData.address,
-          profile_pic_url: formData.profilePic,
         }),
       });
 
@@ -81,6 +82,60 @@ export function ProfilePage() {
     } catch (error) {
       console.error("Failed to save profile:", error);
       setSaveMessage("Failed to save profile");
+    }
+  };
+
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !profileUserId) return;
+
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      setSaveMessage("Please select an image file");
+      setTimeout(() => setSaveMessage(""), 3000);
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setSaveMessage("Image size must be less than 5MB");
+      setTimeout(() => setSaveMessage(""), 3000);
+      return;
+    }
+
+    setUploadingImage(true);
+
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      
+      const response = await fetch(`/api/users/${profileUserId}/profile-pic`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
+        body: arrayBuffer,
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Force reload the profile picture by adding a timestamp
+        const newProfilePic = `${data.profilePic}?t=${Date.now()}`;
+        if (user) {
+          setUser({ ...user, profilePic: newProfilePic });
+        }
+        if (formData) {
+          setFormData({ ...formData, profilePic: newProfilePic });
+        }
+        setSaveMessage("Profile picture updated successfully!");
+        setTimeout(() => setSaveMessage(""), 3000);
+      }
+    } catch (error) {
+      console.error("Failed to upload image:", error);
+      setSaveMessage("Failed to upload image");
+      setTimeout(() => setSaveMessage(""), 3000);
+    } finally {
+      setUploadingImage(false);
     }
   };
 
@@ -128,6 +183,29 @@ export function ProfilePage() {
                   alt={displayUser?.name}
                   className="w-32 h-32 rounded-full border-4 border-slate-900 object-cover shadow-lg"
                 />
+                {isOwnProfile && (
+                  <>
+                    <button
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={uploadingImage}
+                      className="absolute bottom-0 right-0 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white p-2 rounded-full shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                      title="Upload new profile picture"
+                    >
+                      {uploadingImage ? (
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      ) : (
+                        <Camera className="w-5 h-5" />
+                      )}
+                    </button>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                    />
+                  </>
+                )}
               </div>
 
               <div className="flex-1 pt-4 w-full">
@@ -187,7 +265,7 @@ export function ProfilePage() {
                     <div className="flex gap-3 pt-4">
                       <button
                         onClick={handleSave}
-                        className="flex items-center gap-2 flex-1 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-semibold py-2 rounded-lg transition-all duration-300"
+                        className="flex items-center gap-2 flex-1 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-semibold py-2 rounded-lg transition-all duration-300 justify-center"
                       >
                         <Check className="w-4 h-4" />
                         Save Changes
@@ -197,7 +275,7 @@ export function ProfilePage() {
                           setFormData(user);
                           setIsEditing(false);
                         }}
-                        className="flex items-center gap-2 flex-1 bg-red-500/20 border border-red-500/50 hover:bg-red-500/30 text-red-300 font-semibold py-2 rounded-lg transition-all duration-300"
+                        className="flex items-center gap-2 flex-1 bg-red-500/20 border border-red-500/50 hover:bg-red-500/30 text-red-300 font-semibold py-2 rounded-lg transition-all duration-300 justify-center"
                       >
                         <X className="w-4 h-4" />
                         Cancel
@@ -235,13 +313,15 @@ export function ProfilePage() {
                       </div>
                     </div>
 
-                    <button
-                      onClick={() => setIsEditing(true)}
-                      className="mt-6 flex items-center gap-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold px-6 py-2 rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/50"
-                    >
-                      <Edit2 className="w-4 h-4" />
-                      Edit Profile
-                    </button>
+                    {isOwnProfile && (
+                      <button
+                        onClick={() => setIsEditing(true)}
+                        className="mt-6 flex items-center gap-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold px-6 py-2 rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/50"
+                      >
+                        <Edit2 className="w-4 h-4" />
+                        Edit Profile
+                      </button>
+                    )}
                   </div>
                 )}
 

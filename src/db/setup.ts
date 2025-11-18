@@ -23,8 +23,14 @@ export async function initDatabase() {
         lat DECIMAL(10, 7),
         lng DECIMAL(10, 7),
         profile_pic_url TEXT,
+        profile_pic_data BYTEA,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
+    `);
+
+    // Migration: Add profile_pic_data column if it doesn't exist
+    await client.query(`
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS profile_pic_data BYTEA;
     `);
 
     await client.query(`
@@ -124,15 +130,39 @@ export async function initDatabase() {
       // Set the sequence to start at 1624
       await client.query(`ALTER SEQUENCE users_id_seq START WITH 1624 RESTART;`);
       
-      // Seed users
-      await client.query(`
-        INSERT INTO users (email, password, name, address, lat, lng, profile_pic_url) VALUES
-        ('andrewl19488@yahoo.com', 'password123', 'Andrew L', '2845 University Dr NW, Calgary, AB', 51.0825, -114.1290, '${PROFILE_PIC_URL}'),
-        ('iluvfootball599@gmail.com', 'password456', 'Marcus Reid', '3424 Crowchild Trail NW, Calgary, AB', 51.0715, -114.1385, 'https://i.pravatar.cc/150?img=33'),
-        ('emily.park@example.com', 'password789', 'Emily Park', '4515 Varsity Dr NW, Calgary, AB', 51.0892, -114.1425, 'https://i.pravatar.cc/150?img=29'),
-        ('david.kumar@example.com', 'password101', 'David Kumar', '3630 Brentwood Rd NW, Calgary, AB', 51.0920, -114.1288, 'https://i.pravatar.cc/150?img=68'),
-        ('jessica.taylor@example.com', 'password202', 'Jessica Taylor', '2418 4 St NW, Calgary, AB', 51.0627, -114.0745, 'https://i.pravatar.cc/150?img=20')
-      `);
+      // Download profile pictures and store as binary
+      const users = [
+        { email: 'andrewl19488@yahoo.com', password: 'password123', name: 'Andrew L', address: '2845 University Dr NW, Calgary, AB', lat: 51.0825, lng: -114.1290, picUrl: PROFILE_PIC_URL },
+        { email: 'iluvfootball599@gmail.com', password: 'password456', name: 'Marcus Reid', address: '3424 Crowchild Trail NW, Calgary, AB', lat: 51.0715, lng: -114.1385, picUrl: 'https://i.pravatar.cc/150?img=33' },
+        { email: 'emily.park@example.com', password: 'password789', name: 'Emily Park', address: '4515 Varsity Dr NW, Calgary, AB', lat: 51.0892, lng: -114.1425, picUrl: 'https://i.pravatar.cc/150?img=29' },
+        { email: 'david.kumar@example.com', password: 'password101', name: 'David Kumar', address: '3630 Brentwood Rd NW, Calgary, AB', lat: 51.0920, lng: -114.1288, picUrl: 'https://i.pravatar.cc/150?img=68' },
+        { email: 'jessica.taylor@example.com', password: 'password202', name: 'Jessica Taylor', address: '2418 4 St NW, Calgary, AB', lat: 51.0627, lng: -114.0745, picUrl: 'https://i.pravatar.cc/150?img=20' }
+      ];
+
+      for (const user of users) {
+        try {
+          // Download the image
+          const response = await fetch(user.picUrl);
+          const arrayBuffer = await response.arrayBuffer();
+          const buffer = Buffer.from(arrayBuffer);
+
+          // Insert user with binary data
+          await client.query(
+            `INSERT INTO users (email, password, name, address, lat, lng, profile_pic_url, profile_pic_data) 
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+            [user.email, user.password, user.name, user.address, user.lat, user.lng, user.picUrl, buffer]
+          );
+          console.log(`✅ Downloaded and stored profile picture for ${user.name}`);
+        } catch (error) {
+          console.error(`❌ Failed to download profile picture for ${user.name}:`, error);
+          // Insert without image data if download fails
+          await client.query(
+            `INSERT INTO users (email, password, name, address, lat, lng, profile_pic_url) 
+             VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+            [user.email, user.password, user.name, user.address, user.lat, user.lng, user.picUrl]
+          );
+        }
+      }
     }
 
     // Check if pizzas exist
