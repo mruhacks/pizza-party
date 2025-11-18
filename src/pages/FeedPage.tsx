@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Heart, MessageCircle, Share2, MapPin, Star } from "lucide-react";
+import { PROFILE_PIC_URL } from "@/config/general";
 
 interface Post {
   id: number;
@@ -48,7 +49,7 @@ export function FeedPage() {
     if (id && name) {
       setUserId(id);
       setUserName(name);
-      setProfilePic("https://i.pravatar.cc/150?img=" + id);
+      setProfilePic(PROFILE_PIC_URL);
     }
     fetchPosts();
     fetchPizzas();

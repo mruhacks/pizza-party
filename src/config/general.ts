@@ -1,0 +1,1 @@
+export const PROFILE_PIC_URL = process.env.PROFILE_PIC_URL || 'https://images.unsplash.com/photo-1564564321837-a57b7070ac4f?w=500&h=500&fit=crop&crop=faces';

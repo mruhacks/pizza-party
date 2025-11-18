@@ -1,3 +1,4 @@
+import { PROFILE_PIC_URL } from "@/config/general";
 import { Pool } from "pg";
 
 export const pool = new Pool({
@@ -126,7 +127,7 @@ export async function initDatabase() {
       // Seed users
       await client.query(`
         INSERT INTO users (email, password, name, address, lat, lng, profile_pic_url) VALUES
-        ('jed.maxwell5943@yahoo.com', 'password123', 'Jed Maxwell', '2845 University Dr NW, Calgary, AB', 51.0825, -114.1290, 'https://images.unsplash.com/photo-1564564321837-a57b7070ac4f?w=500&h=500&fit=crop&crop=faces'),
+        ('andrewl19488@yahoo.com', 'password123', 'Andrew L', '2845 University Dr NW, Calgary, AB', 51.0825, -114.1290, '${PROFILE_PIC_URL}'),
         ('iluvfootball599@gmail.com', 'password456', 'Marcus Reid', '3424 Crowchild Trail NW, Calgary, AB', 51.0715, -114.1385, 'https://i.pravatar.cc/150?img=33'),
         ('emily.park@example.com', 'password789', 'Emily Park', '4515 Varsity Dr NW, Calgary, AB', 51.0892, -114.1425, 'https://i.pravatar.cc/150?img=29'),
         ('david.kumar@example.com', 'password101', 'David Kumar', '3630 Brentwood Rd NW, Calgary, AB', 51.0920, -114.1288, 'https://i.pravatar.cc/150?img=68'),
