@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Mail, Lock, Zap } from "lucide-react";
+import { Mail, Lock } from "lucide-react";
+import logoSvg from "../favicon/favicon.svg";
 
 export function LoginPage() {
-  const [email, setEmail] = useState("jed.maxwell5943@yahoo.com");
+  const [email, setEmail] = useState("andrewl19488@yahoo.com");
   const [password, setPassword] = useState("password123");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -48,8 +49,8 @@ export function LoginPage() {
       <div className="w-full max-w-md relative z-10">
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
-            <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
-              <Zap className="w-8 h-8 text-white" />
+            <div className="w-15 h-15 bg-gradient-to-br from-purple-500/80 to-pink-500/80 backdrop-blur-sm rounded-full flex items-center justify-center p-1.5 shadow-lg border border-white/20">
+              <img src={logoSvg} alt="Pizza Party" className="w-full h-full" />
             </div>
           </div>
           <h1 className="text-4xl font-bold text-white mb-2">Pizza Party</h1>
