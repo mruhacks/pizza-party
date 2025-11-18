@@ -14,7 +14,7 @@ Search for
 - Note the user id in the URL
 - Try changing the user id to something else.
 
-WHOA - I can see someone else's profile!!!
+WHOA - I can see someone else's profile!!! I can see their sensitive information like favourite pizza, address!?!
 
 - Go to user 1625 (Marcus Reid)
 - Try editing the profile - WHOA!

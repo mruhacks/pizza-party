@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { User, MapPin, Mail, LogOut, Edit2, Check, X, Camera } from "lucide-react";
+import { User, MapPin, Mail, LogOut, Edit2, Check, X, Camera, Pizza } from "lucide-react";
 
 interface UserProfile {
   id: string;
@@ -8,6 +8,7 @@ interface UserProfile {
   email: string;
   address: string;
   profilePic: string;
+  favoritePizza?: string;
 }
 
 export function ProfilePage() {
@@ -68,6 +69,7 @@ export function ProfilePage() {
           name: formData.name,
           email: formData.email,
           address: formData.address,
+          favorite_pizza: formData.favoritePizza,
         }),
       });
 
@@ -260,6 +262,24 @@ export function ProfilePage() {
                       />
                     </div>
 
+                    <div>
+                      <label className="block text-white/80 text-sm font-medium mb-2">
+                        Favorite Pizza
+                      </label>
+                      <input
+                        type="text"
+                        value={formData?.favoritePizza || ""}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData!,
+                            favoritePizza: e.target.value,
+                          })
+                        }
+                        placeholder="e.g., Pepperoni & Mushroom"
+                        className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-purple-400 focus:bg-white/15 transition-all"
+                      />
+                    </div>
+
                     <div className="flex gap-3 pt-4">
                       <button
                         onClick={handleSave}
@@ -310,6 +330,18 @@ export function ProfilePage() {
                         </div>
                       </div>
                     </div>
+
+                    {displayUser?.favoritePizza && (
+                      <div className="flex items-start gap-3 pt-2">
+                        <Pizza className="w-5 h-5 text-cyan-400 mt-1 flex-shrink-0" />
+                        <div>
+                          <p className="text-white/60 text-sm">Favorite Pizza</p>
+                          <p className="text-white/90 mt-1 font-medium">
+                            {displayUser.favoritePizza}
+                          </p>
+                        </div>
+                      </div>
+                    )}
 
                     <button
                       onClick={() => setIsEditing(true)}

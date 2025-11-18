@@ -118,6 +118,7 @@ const server = serve({
               lat: parseFloat(user.lat),
               lng: parseFloat(user.lng),
               profilePic: `/api/users/${user.id}/profile-pic`,
+              favoritePizza: user.favorite_pizza,
             },
           });
         } catch (error) {
@@ -160,6 +161,10 @@ const server = serve({
             updates.push(`profile_pic_url = $${paramCount++}`);
             values.push(body.profile_pic_url);
           }
+          if (body.favorite_pizza !== undefined) {
+            updates.push(`favorite_pizza = $${paramCount++}`);
+            values.push(body.favorite_pizza);
+          }
 
           if (updates.length === 0) {
             return Response.json({ error: "No fields to update" }, { status: 400 });
@@ -186,6 +191,7 @@ const server = serve({
               lat: parseFloat(user.lat),
               lng: parseFloat(user.lng),
               profilePic: `/api/users/${user.id}/profile-pic`,
+              favoritePizza: user.favorite_pizza,
             },
           });
         } catch (error) {
