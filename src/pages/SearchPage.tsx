@@ -57,7 +57,11 @@ export function SearchPage() {
     setLoading(true);
     setSqlError("");
     try {
-      const response = await fetch(`/api/search/pizzas?q=&lat=${lat}&lng=${lng}`);
+      const response = await fetch(`/api/search/pizzas?q=&lat=${lat}&lng=${lng}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
+      });
       const data = await response.json();
 
       if (!response.ok) {
@@ -82,7 +86,12 @@ export function SearchPage() {
       const lat = location?.latitude || DEFAULT_CENTER.lat;
       const lng = location?.longitude || DEFAULT_CENTER.lng;
       const response = await fetch(
-        `/api/search/pizzas?q=${encodeURIComponent(searchQuery)}&lat=${lat}&lng=${lng}`
+        `/api/search/pizzas?q=${encodeURIComponent(searchQuery)}&lat=${lat}&lng=${lng}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+          },
+        }
       );
       const data = await response.json();
 

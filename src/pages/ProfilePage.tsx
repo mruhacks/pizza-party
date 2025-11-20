@@ -40,7 +40,11 @@ export function ProfilePage() {
   const fetchUserProfile = async (userId: string) => {
     setLoading(true);
     try {
-      const response = await fetch(`/api/users/${userId}`);
+      const response = await fetch(`/api/users/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
+      });
       const data = await response.json();
 
       if (data.success) {

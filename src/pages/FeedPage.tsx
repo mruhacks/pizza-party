@@ -58,7 +58,11 @@ export function FeedPage() {
   const fetchPosts = async (showLoading = false) => {
     if (showLoading) setRefreshing(true);
     try {
-      const response = await fetch("/api/posts");
+      const response = await fetch("/api/posts", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
+      });
       if (response.ok) {
         const data = await response.json();
         setPosts(data.posts || []);
@@ -114,7 +118,11 @@ export function FeedPage() {
 
   const fetchPizzas = async () => {
     try {
-      const resp = await fetch(`/api/search/pizzas?q=`);
+      const resp = await fetch(`/api/search/pizzas?q=`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
+      });
       if (resp.ok) {
         const data = await resp.json();
         const list = (data.results || []).map((p: any) => ({ id: p.id, name: p.name }));

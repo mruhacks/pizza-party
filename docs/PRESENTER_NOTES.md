@@ -48,5 +48,18 @@ WHOA - I can see someone else's profile!!! I can see their sensitive information
 - Post it
 - Click Refresh on the feed
 
-SEE THE FAKE POST!?
+SEE THE FAKE POST!
 
+- You can also do this API request using a tool like Postman or Bruno. I like Bruno since it keeps your data local instead of in their cloud.
+- Look at the URL from the Network tab
+
+- Open the Bruno collection from `/docs/artifacts/bruno`
+- Look at the Fake Post request - we have the same URL in there for creating a post
+- Run it - fails with "Unauthorized"
+- Ask the crowd - any ideas on what I should do here?
+
+- Go back to the Network devtools and look at the headers
+- There's an Authorization header with a Bearer Token
+    - Common flow as when you sign in with user and password it creates a token (usually only valid for a few hours or days) that you can then use on subsequent requests to authenticate you. This way you don't have to send your user/pass on every request.
+- Put that in the Headers tab in Bruno and try again
+- Refresh the feed and BAM - there is the fake post ;)

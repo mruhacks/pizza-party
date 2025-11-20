@@ -1,0 +1,27 @@
+meta {
+  name: Fake Post
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:3000/api/posts
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "userId": "1625",
+    "content": "Today I wore khakis to work #blessed",
+    "happinessRating": 5,
+    "rizzRating": 3,
+    "experienceRating": 4,
+    "pizzaId": 8
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

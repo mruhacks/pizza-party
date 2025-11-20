@@ -5,6 +5,17 @@ import { pool, initDatabase, calculateDistance } from "./db/setup";
 // Initialize database on startup
 await initDatabase();
 
+// Helper function to check authentication
+function isAuthenticated(req: Request): boolean {
+  const authHeader = req.headers.get("Authorization");
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return false;
+  }
+  const token = authHeader.substring(7);
+  // Basic token validation (checking it exists and has expected structure)
+  return token.startsWith("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.");
+}
+
 const server = serve({
   routes: {
     "/*": index,
@@ -42,6 +53,11 @@ const server = serve({
 
     "/api/search/pizzas": {
       async GET(req) {
+        // Check authentication
+        if (!isAuthenticated(req)) {
+          return Response.json({ error: "Unauthorized" }, { status: 401 });
+        }
+
         let query: string = "";
         try {
           const url = new URL(req.url);
@@ -97,6 +113,11 @@ const server = serve({
 
     "/api/users/:id": {
       async GET(req) {
+        // Check authentication
+        if (!isAuthenticated(req)) {
+          return Response.json({ error: "Unauthorized" }, { status: 401 });
+        }
+
         try {
           const userId = parseInt(req.params.id);
 
@@ -127,6 +148,11 @@ const server = serve({
       },
 
       async PUT(req) {
+        // Check authentication
+        if (!isAuthenticated(req)) {
+          return Response.json({ error: "Unauthorized" }, { status: 401 });
+        }
+
         try {
           const userId = parseInt(req.params.id);
           const body = await req.json();
@@ -229,6 +255,11 @@ const server = serve({
       },
 
       async PUT(req) {
+        // Check authentication
+        if (!isAuthenticated(req)) {
+          return Response.json({ error: "Unauthorized" }, { status: 401 });
+        }
+
         try {
           const userId = parseInt(req.params.id);
           
@@ -261,6 +292,11 @@ const server = serve({
 
     "/api/posts": {
       async GET(req) {
+        // Check authentication
+        if (!isAuthenticated(req)) {
+          return Response.json({ error: "Unauthorized" }, { status: 401 });
+        }
+
         try {
           const result = await pool.query(`
             SELECT 
@@ -316,6 +352,11 @@ const server = serve({
       },
 
       async POST(req) {
+        // Check authentication
+        if (!isAuthenticated(req)) {
+          return Response.json({ error: "Unauthorized" }, { status: 401 });
+        }
+
         try {
           const body = await req.json();
           const { userId, content, pizzaId, happinessRating, rizzRating, experienceRating } = body;
