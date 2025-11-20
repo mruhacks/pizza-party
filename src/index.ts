@@ -38,7 +38,7 @@ const server = serve({
           const user = result.rows[0];
           const token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.${Buffer.from(
             JSON.stringify({ id: user.id, email: user.email })
-          ).toString("base64")}.mock_signature`;
+          ).toString("base64")}`;
 
           return Response.json({
             success: true,

@@ -1,6 +1,7 @@
 ## Prep
 - Follow instructions in `/README.md` to set up local app
-- Open Firefox and go to http://localhost:3000
+- Add `127.0.0.1 pizzaparty.com` to your hosts file
+- Open Firefox and go to https://pizzaparty.com/
 
 
 ## SQL Injection
