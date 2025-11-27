@@ -1,4 +1,7 @@
 import { useState, useEffect } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import rehypeSanitize from "rehype-sanitize";
 import { useNavigate } from "react-router-dom";
 import { Heart, MessageCircle, Share2, MapPin, Star, RefreshCw } from "lucide-react";
 
@@ -272,7 +275,17 @@ export function FeedPage() {
                     </div>
                   </div>
 
-                  <p className="text-white/90 mb-4">{post.content}</p>
+                  <div className="text-white/90 mb-4 markdown-content">
+                    <ReactMarkdown
+                      remarkPlugins={[remarkGfm]}
+                      rehypePlugins={[rehypeSanitize]}
+                      components={{
+                        a: (props: any) => <a className="underline text-purple-300 hover:text-purple-200" {...props} />,
+                      }}
+                    >
+                      {post.content}
+                    </ReactMarkdown>
+                  </div>
                   {post.ratings && (post.ratings.happiness || post.ratings.rizz || post.ratings.experience) && (
                     <div className="flex gap-4 mb-4 text-xs">
                       {post.ratings.happiness && (
