@@ -174,34 +174,34 @@ export async function initDatabase() {
     // Check if pizzas exist
     const pizzaCount = await client.query("SELECT COUNT(*) FROM pizzas");
     if (parseInt(pizzaCount.rows[0].count) === 0) {
-      // Seed pizza shops near University of Calgary
+      // Seed pizza shops near Mount Royal University
       await client.query(`
         INSERT INTO pizzas (name, address, lat, lng, rating, price_range, photo_url) VALUES
-        ('University Pizza', '3623 Shaganappi Trail NW, Calgary, AB', 51.0887, -114.1345, 4.3, 1, 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400&h=300&fit=crop'),
-        ('Pizza Hut - University District', '3630 Brentwood Rd NW, Calgary, AB', 51.0923, -114.1289, 4.0, 2, 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&h=300&fit=crop'),
-        ('Domino''s Pizza - Brentwood', '3630 Brentwood Rd NW, Calgary, AB', 51.0920, -114.1285, 3.9, 1, 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400&h=300&fit=crop'),
-        ('Boston Pizza - Crowfoot', '150 Crowfoot Cres NW, Calgary, AB', 51.1218, -114.2078, 4.2, 2, 'https://images.unsplash.com/photo-1571997478779-2adcbbe9ab2f?w=400&h=300&fit=crop'),
-        ('Panago Pizza - Brentwood', '3630 Brentwood Rd NW #308, Calgary, AB', 51.0925, -114.1291, 4.1, 2, 'https://images.unsplash.com/photo-1590534047230-c8e4e9ec04e0?w=400&h=300&fit=crop'),
-        ('Chicago Deep Dish Pizza Co', '3608 Brentwood Rd NW, Calgary, AB', 51.0915, -114.1280, 4.4, 2, 'https://images.unsplash.com/photo-1628840042765-356cda07504e?w=400&h=300&fit=crop'),
-        ('Pizza 73 - University Heights', '3410 20 St NW, Calgary, AB', 51.0762, -114.0890, 3.8, 1, 'https://images.unsplash.com/photo-1585238342024-78d387f4a707?w=400&h=300&fit=crop'),
-        ('Famoso Neapolitan Pizzeria - Market Mall', '3625 Shaganappi Trail NW, Calgary, AB', 51.0895, -114.1352, 4.3, 2, 'https://images.unsplash.com/photo-1593560708920-61dd98c46a4e?w=400&h=300&fit=crop'),
-        ('Pulcinella - Kensington', '1147 Kensington Cres NW, Calgary, AB', 51.0525, -114.0862, 4.5, 2, 'https://images.unsplash.com/photo-1604068549290-dea0e4a305ca?w=400&h=300&fit=crop'),
-        ('Noble Pie Parlour', '2418 4 St NW, Calgary, AB', 51.0627, -114.0745, 4.6, 2, 'https://images.unsplash.com/photo-1534308983496-4fabb1a015ee?w=400&h=300&fit=crop'),
-        ('UNA Pizza + Wine - Brentwood', '3630 Brentwood Rd NW, Calgary, AB', 51.0918, -114.1287, 4.5, 3, 'https://images.unsplash.com/photo-1595854341625-f33ee10dbf94?w=400&h=300&fit=crop'),
-        ('Village Flatbread Co', '4600 Crowchild Trail NW, Calgary, AB', 51.0835, -114.1512, 4.4, 2, 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop'),
-        ('Red Swan Pizza - Varsity', '4607 Varsity Dr NW, Calgary, AB', 51.0898, -114.1456, 4.2, 2, 'https://images.unsplash.com/photo-1565299507177-b0ac66763828?w=400&h=300&fit=crop'),
-        ('Canadian Pizza Unlimited - U of C', '3355 University Dr NW, Calgary, AB', 51.0795, -114.1275, 4.0, 1, 'https://images.unsplash.com/photo-1576458088443-04a19bb13da6?w=400&h=300&fit=crop'),
-        ('Blaze Pizza - Market Mall', '3625 Shaganappi Trail NW, Calgary, AB', 51.0893, -114.1348, 4.2, 2, 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400&h=300&fit=crop&q=80'),
-        ('Spacca Napoli Pizzeria', '4322 16 Ave NW, Calgary, AB', 51.0680, -114.1145, 4.7, 3, 'https://images.unsplash.com/photo-1571407970349-bc81e7e96c47?w=400&h=300&fit=crop'),
-        ('Inglewood Drive-In', '2422 Crowchild Trail NW, Calgary, AB', 51.0632, -114.1098, 4.1, 1, 'https://images.unsplash.com/photo-1598023696416-0193a0bcd302?w=400&h=300&fit=crop'),
-        ('Double Zero - Market Mall', '3625 Shaganappi Trail NW, Calgary, AB', 51.0896, -114.1350, 4.4, 3, 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400&h=300&fit=crop&q=80'),
-        ('Nikos Pizza - Montgomery', '5005 16 Ave NW, Calgary, AB', 51.0682, -114.1412, 3.9, 1, 'https://images.unsplash.com/photo-1594007654729-407eedc4be65?w=400&h=300&fit=crop'),
-        ('Za Pizza Bistro', '3904 Edmonton Trail NE, Calgary, AB', 51.0738, -114.0515, 4.3, 2, 'https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=400&h=300&fit=crop'),
+        ('Lincoln Park Pizza', '4720 Lincoln Park Dr SW, Calgary, AB', 51.0108, -114.1458, 4.2, 1, 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400&h=300&fit=crop'),
+        ('Pizza Hut - Glenbrook', '3606 Bow Trail SW, Calgary, AB', 51.0222, -114.1415, 4.0, 2, 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&h=300&fit=crop'),
+        ('Domino''s Pizza - Glamorgan', '3720 37 St SW, Calgary, AB', 51.0185, -114.1445, 3.9, 1, 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400&h=300&fit=crop'),
+        ('Boston Pizza - Westhills', '8080 Sarcee Trail SW, Calgary, AB', 51.0298, -114.1822, 4.2, 2, 'https://images.unsplash.com/photo-1571997478779-2adcbbe9ab2f?w=400&h=300&fit=crop'),
+        ('Panago Pizza - Lakeview', '5005 37 St SW, Calgary, AB', 50.9952, -114.1438, 4.1, 2, 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=300&fit=crop'),
+        ('Chicago Deep Dish Pizza Co', '1912 33 Ave SW, Calgary, AB', 51.0198, -114.0965, 4.4, 2, 'https://images.unsplash.com/photo-1628840042765-356cda07504e?w=400&h=300&fit=crop'),
+        ('Pizza 73 - Glamorgan', '3415 Glamorgan Dr SW, Calgary, AB', 51.0175, -114.1432, 3.8, 1, 'https://images.unsplash.com/photo-1585238342024-78d387f4a707?w=400&h=300&fit=crop'),
+        ('Famoso Neapolitan Pizzeria - Chinook', '6455 Macleod Trail S, Calgary, AB', 50.9982, -114.0738, 4.3, 2, 'https://images.unsplash.com/photo-1593560708920-61dd98c46a4e?w=400&h=300&fit=crop'),
+        ('Pulcinella', '1147 Kensington Cres NW, Calgary, AB', 51.0525, -114.0862, 4.5, 2, 'https://images.unsplash.com/photo-1604068549290-dea0e4a305ca?w=400&h=300&fit=crop'),
+        ('Noble Pie Parlour', '810 17 Ave SW, Calgary, AB', 51.0412, -114.0723, 4.6, 2, 'https://images.unsplash.com/photo-1534308983496-4fabb1a015ee?w=400&h=300&fit=crop'),
+        ('UNA Pizza + Wine', '618 17 Ave SW, Calgary, AB', 51.0408, -114.0795, 4.5, 3, 'https://images.unsplash.com/photo-1595854341625-f33ee10dbf94?w=400&h=300&fit=crop'),
+        ('Village Flatbread Co', '2216 33 Ave SW, Calgary, AB', 51.0205, -114.0965, 4.4, 2, 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop'),
+        ('Red Swan Pizza - Kingsland', '7620 Elbow Dr SW, Calgary, AB', 50.9852, -114.0825, 4.2, 2, 'https://images.unsplash.com/photo-1565299507177-b0ac66763828?w=400&h=300&fit=crop'),
+        ('Canadian Pizza Unlimited - Glamorgan', '3354 Bow Trail SW, Calgary, AB', 51.0225, -114.1352, 4.0, 1, 'https://images.unsplash.com/photo-1576458088443-04a19bb13da6?w=400&h=300&fit=crop'),
+        ('Blaze Pizza - Westhills', '8050 Sarcee Trail SW, Calgary, AB', 51.0295, -114.1820, 4.2, 2, 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400&h=300&fit=crop&q=80'),
+        ('Spacca Napoli Pizzeria', '4104 17 Ave SW, Calgary, AB', 51.0408, -114.1255, 4.7, 3, 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=300&fit=crop'),
+        ('Glamorgan Slice House', '3608 37 St SW, Calgary, AB', 51.0188, -114.1442, 4.1, 1, 'https://images.unsplash.com/photo-1598023696416-0193a0bcd302?w=400&h=300&fit=crop'),
+        ('Double Zero - Marda Loop', '1014 33 Ave SW, Calgary, AB', 51.0215, -114.0932, 4.4, 3, 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400&h=300&fit=crop&q=80'),
+        ('Nikos Pizza - Lakeview', '5303 37 St SW, Calgary, AB', 50.9928, -114.1448, 3.9, 1, 'https://images.unsplash.com/photo-1594007654729-407eedc4be65?w=400&h=300&fit=crop'),
+        ('Za Pizza Bistro', '3725 17 Ave SW, Calgary, AB', 51.0405, -114.1048, 4.3, 2, 'https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=400&h=300&fit=crop'),
         ('Without Papers Pizza - Hillhurst', '1216 Kensington Rd NW, Calgary, AB', 51.0528, -114.0868, 4.6, 2, 'https://images.unsplash.com/photo-1588315029754-2dd089d39a1a?w=400&h=300&fit=crop'),
-        ('Sal''s Pizzeria', '5005 20 St NW, Calgary, AB', 51.0680, -114.0893, 4.2, 2, 'https://images.unsplash.com/photo-1571407970349-bc81e7e96c47?w=400&h=300&fit=crop&q=80'),
-        ('Mountain Mike''s Pizza', '5333 Northland Dr NW, Calgary, AB', 51.0975, -114.1125, 4.1, 2, 'https://images.unsplash.com/photo-1590947132387-155cc02f3212?w=400&h=300&fit=crop'),
-        ('La Pizzeria Napoletana', '3702 17 Ave SW, Calgary, AB', 51.0368, -114.1035, 4.5, 2, 'https://images.unsplash.com/photo-1593560708920-61dd98c46a4e?w=400&h=300&fit=crop&q=80'),
-        ('The Pie Hole Pizza', '4739 17 Ave SE, Calgary, AB', 51.0365, -113.9715, 4.3, 2, 'https://images.unsplash.com/photo-1628840042765-356cda07504e?w=400&h=300&fit=crop&q=80')
+        ('Sal''s Pizzeria', '3605 33 Ave SW, Calgary, AB', 51.0195, -114.0948, 4.2, 2, 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=300&fit=crop'),
+        ('Mountain Mike''s Pizza', '5420 Macleod Trail SW, Calgary, AB', 51.0062, -114.0728, 4.1, 2, 'https://images.unsplash.com/photo-1590947132387-155cc02f3212?w=400&h=300&fit=crop'),
+        ('La Pizzeria Napoletana', '2412 34 Ave SW, Calgary, AB', 51.0185, -114.0912, 4.5, 2, 'https://images.unsplash.com/photo-1593560708920-61dd98c46a4e?w=400&h=300&fit=crop&q=80'),
+        ('The Pie Hole Pizza', '4825 Elbow Dr SW, Calgary, AB', 50.9948, -114.0825, 4.3, 2, 'https://images.unsplash.com/photo-1628840042765-356cda07504e?w=400&h=300&fit=crop&q=80')
       `);
     }
 
@@ -211,7 +211,7 @@ export async function initDatabase() {
       // Seed posts with varied ratings across different shops
       // Top tier shops (Spacca Napoli #16, Noble Pie #10, Pulcinella #9, UNA Pizza #11, Without Papers #21)
       // Mid tier shops (Blaze #15, Famoso #8, Chicago Deep Dish #6, Village Flatbread #12)
-      // Lower tier shops (University Pizza #1, Pizza 73 #7, Domino's #3)
+      // Lower tier shops (Lincoln Park Pizza #1, Pizza 73 #7, Domino's #3)
       await client.query(`
         INSERT INTO posts (user_id, content, photo_url, pizza_id, happiness_rating, rizz_rating, experience_rating, created_at) VALUES
         -- Spacca Napoli (Top Tier - Amazing taste, great vibe, good service - 8 reviews)
@@ -282,9 +282,9 @@ export async function initDatabase() {
         (1624, 'Their flatbreads are unique and tasty', NULL, 12, 4, 4, 3, NOW() - INTERVAL '10 days'),
         (1627, 'Good spot for families. Nice variety', NULL, 12, 3, 5, 4, NOW() - INTERVAL '2 weeks'),
         
-        -- University Pizza (Lower Tier - Meh taste, no vibe, convenient late night - 4 reviews)
+        -- Lincoln Park Pizza (Lower Tier - Meh taste, no vibe, convenient late night - 4 reviews)
         (1624, 'Late night cravings satisfied! Nothing beats a classic pepperoni 🌙🍕', 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&h=600&fit=crop', 1, 2, 2, 4, NOW() - INTERVAL '18 hours'),
-        (1626, 'University Pizza is cheap and open late. That''s about it', NULL, 1, 2, 1, 4, NOW() - INTERVAL '4 days'),
+        (1626, 'Lincoln Park Pizza is cheap and open late. That''s about it', NULL, 1, 2, 1, 4, NOW() - INTERVAL '4 days'),
         (1625, 'It''s fine for a late night student meal', NULL, 1, 2, 2, 3, NOW() - INTERVAL '7 days'),
         (1628, 'Not great but gets the job done when you''re desperate', NULL, 1, 2, 1, 3, NOW() - INTERVAL '2 weeks'),
         
